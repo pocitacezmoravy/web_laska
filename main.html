@@ -3,31 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naše Rande</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Naše Rande ❤️</title>
+    
+    <!-- STYLY (CSS) -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffe6e8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.15);
+            max-width: 420px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #d63384;
+            text-align: center;
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea, button {
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #d63384;
+            box-shadow: 0 0 0 3px rgba(214, 51, 132, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+        }
+
+        button:hover {
+            background-color: #e84118;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #confirmationMessage {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+
     <div class="card">
         <h1>Naplánujme si rande ❤️</h1>
+        
         <form id="dateForm">
             <label for="date">Kdy vyrazíme?</label>
             <input type="date" id="date" required>
 
             <label for="activity">Co budeme dělat?</label>
             <select id="activity" required>
-                <option value="Kino a večeře">Kino a večeře</option>
-                <option value="Procházka a piknik">Procházka a piknik</option>
-                <option value="Výlet do přírody">Výlet do přírody</option>
-                <option value="Deskovky a pizza home">Deskovky a pizza doma</option>
+                <option value="Kino a večeře">Kino a večeře 🍿</option>
+                <option value="Procházka a piknik">Procházka a piknik 🧺</option>
+                <option value="Výlet do přírody">Výlet do přírody 🌲</option>
+                <option value="Deskovky a pizza doma">Deskovky a pizza doma 🍕</option>
             </select>
 
             <label for="note">Nějaké speciální přání?</label>
-            <textarea id="note" placeholder="Třeba jakou pizzu dáme..."></textarea>
+            <textarea id="note" placeholder="Třeba jakou pizzu si dáme..."></textarea>
 
-            <button type="submit">Odeslat nápad</button>
+            <button type="submit">Odeslat nápad ✨</button>
         </form>
-        <p id="confirmationMessage" class="hidden">Super! Nápad odeslán, už se těším! 🥰</p>
+
+        <div id="confirmationMessage" class="hidden">
+            Super! Nápad odeslán, už se moc těším! 🥰
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <!-- LOGIKA A SKRIPT (JavaScript) -->
+    <script>
+        document.getElementById('dateForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const button = e.target.querySelector('button');
+            button.innerText = 'Odesílám...';
+            button.disabled = true;
+
+            const data = {
+                datum: document.getElementById('date').value,
+                aktivita: document.getElementById('activity').value,
+                poznamka: document.getElementById('note').value
+            };
+
+            /* 
+               NÁVOD PRO ODESÍLÁNÍ NA EMAIL:
+               1. Zaregistrujte se zdarma na https://formspree.io
+               2. Vytvořte nový formulář a získejte kód/ID.
+               3. Nahraďte 'TVOJE_FORMSPREE_ID' níže vaším kódem.
+            */
+            try {
+                const response = await fetch('https://formspree.io/f/TVOJE_FORMSPREE_ID', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.getElementById('dateForm').reset();
+                    document.getElementById('confirmationMessage').classList.remove('hidden');
+                } else {
+                    alert('Něco se nepovedlo. Zkontrolujte nastavení Formspree.');
+                }
+            } catch (error) {
+                alert('Chyba při připojení. Zkontrolujte připojení k internetu.');
+            } finally {
+                button.innerText = 'Odeslat nápad ✨';
+                button.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
