@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naše Rande</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <h1>Naplánujme si rande ❤️</h1>
+        <form id="dateForm">
+            <label for="date">Kdy vyrazíme?</label>
+            <input type="date" id="date" required>
+
+            <label for="activity">Co budeme dělat?</label>
+            <select id="activity" required>
+                <option value="Kino a večeře">Kino a večeře</option>
+                <option value="Procházka a piknik">Procházka a piknik</option>
+                <option value="Výlet do přírody">Výlet do přírody</option>
+                <option value="Deskovky a pizza home">Deskovky a pizza doma</option>
+            </select>
+
+            <label for="note">Nějaké speciální přání?</label>
+            <textarea id="note" placeholder="Třeba jakou pizzu dáme..."></textarea>
+
+            <button type="submit">Odeslat nápad</button>
+        </form>
+        <p id="confirmationMessage" class="hidden">Super! Nápad odeslán, už se těším! 🥰</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
