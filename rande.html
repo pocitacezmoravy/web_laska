@@ -257,6 +257,18 @@ document.getElementById("calendarBtn").addEventListener("click", function() {
         `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
         `SUMMARY:${escapeICS("Rande ❤️ – " + confirmedEvent.activity)}`,
         `DESCRIPTION:${escapeICS(confirmedEvent.note)}`,
+        // Upozornění 1 den předem (24 hodin)
+        "BEGIN:VALARM",
+        "ACTION:DISPLAY",
+        "DESCRIPTION:Zítra vás čeká rande! ❤️",
+        "TRIGGER:-P1D",
+        "END:VALARM",
+        // Upozornění 2 hodiny předem
+        "BEGIN:VALARM",
+        "ACTION:DISPLAY",
+        "DESCRIPTION:Za 2 hodiny začíná rande! 🥰",
+        "TRIGGER:-PT2H",
+        "END:VALARM",
         "END:VEVENT",
         "END:VCALENDAR"
     ].join("\r\n");
