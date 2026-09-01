@@ -1,197 +1,139 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naše Rande ❤️</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Co budeme dělat? ❤️</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #ffffff 0%, #fff7f8 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            overflow: hidden;
-            position: relative;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        .heart {
-            position: fixed;
-            bottom: -30px;
-            color: rgba(255, 105, 180, 0.5);
-            pointer-events: none;
-            animation: floatHeart linear forwards;
-            z-index: 1;
-        }
+body {
+    background-image: linear-gradient(120deg, #fccbdb 0%, #f7f0ac 100%);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+}
 
-        @keyframes floatHeart {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
+/* Srdíčka */
+.heart {
+    position: absolute;
+    background-color: rgba(255, 105, 180, .3);
+    width: 10px;
+    height: 10px;
+    transform: rotate(-45deg);
+    animation: float 10s infinite linear;
+}
 
-            10% {
-                opacity: 1;
-            }
+.heart:before,
+.heart:after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: inherit;
+    border-radius: 50%;
+}
 
-            100% {
-                transform: translateY(-120vh) translateX(80px) rotate(360deg);
-                opacity: 0;
-            }
-        }
+.heart:before { top: -5px; left: 0; }
+.heart:after { top: 0; left: 5px; }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.15);
-            max-width: 420px;
-            width: 100%;
-            position: relative;
-            z-index: 10;
-        }
+@keyframes float {
+    0% { opacity: 0; transform: rotate(-45deg) translateY(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: rotate(-45deg) translateY(-100vh); }
+}
 
-        h1 {
-            color: #d63384;
-            text-align: center;
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-        }
+.heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+.heart:nth-child(2) { left: 30%; animation-delay: 2s; }
+.heart:nth-child(3) { left: 50%; animation-delay: 4s; }
+.heart:nth-child(4) { left: 70%; animation-delay: 6s; }
+.heart:nth-child(5) { left: 90%; animation-delay: 8s; }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
+.card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .1);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
 
-        label {
-            font-weight: 600;
-            color: #495057;
-            font-size: 0.95rem;
-        }
+.small-question {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: .8rem;
+    color: #666;
+    font-weight: 600;
+}
 
-        input,
-        select,
-        textarea,
-        button {
-            padding: 0.8rem 1rem;
-            border: 1.5px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: #4a0404;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #d63384;
-            box-shadow: 0 0 0 3px rgba(214, 51, 132, 0.15);
-        }
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+.btn-link {
+    display: block;
+    background: #d63384;
+    color: white;
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: .3s;
+}
 
-        button {
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
-        }
-
-        button:hover {
-            background-color: #e84118;
-            transform: translateY(-2px);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #confirmationMessage {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background-color: #d4edda;
-            color: #155724;
-            border-radius: 10px;
-            font-weight: 600;
-            text-align: center;
-        }
-    </style>
+.btn-link:hover {
+    background: #c42b78;
+    transform: translateY(-2px);
+}
+</style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>Naplánujme si rande ❤️</h1>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
 
-        <form id="dateForm">
-            <label for="date">Kdy vyrazíme?</label>
-            <input type="date" id="date" required>
+<div class="card">
+    <div class="small-question">Co bys chtěla dělat?</div>
+    <h1>Vyber si ❤️</h1>
 
-            <label for="activity">Co budeme dělat?</label>
-            <select id="activity" required>
-                <option value="Kino a večeře">Kino a večeře 🍿</option>
-                <option value="Procházka a piknik">Procházka a piknik 🧺</option>
-                <option value="Výlet do přírody">Výlet do přírody 🌲</option>
-                <option value="Deskovky a pizza doma">Deskovky a pizza doma 🍕</option>
-            </select>
-
-            <label for="note">Nějaké speciální přání?</label>
-            <textarea id="note" placeholder="Třeba jakou pizzu si dáme..."></textarea>
-
-            <button type="submit">Odeslat nápad ✨</button>
-        </form>
-
-        <div id="confirmationMessage" class="hidden">
-            Super! Nápad odeslán, už se moc těším! 🥰
-        </div>
+    <div class="menu-options">
+        <a href="rande.html" class="btn-link">❤️ Rande</a>
+        <a href="film.html" class="btn-link">🎬 Filmový večer</a>
+        <a href="vylet.html" class="btn-link">🌲 Výlet</a>
+        <a href="prekvapeni.html" class="btn-link">🎁 Překvapení</a>
     </div>
-
-    <script>
-        /* Poletující srdíčka */
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤';
-
-            heart.style.left = Math.random() * window.innerWidth + 'px';
-            heart.style.fontSize = (15 + Math.random() * 25) + 'px';
-            heart.style.animationDuration = (5 + Math.random() * 6) + 's';
-
-            document.body.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 11000);
-        }
-
-        setInterval(createHeart, 450);
-
-        /* Formulář */
-        document.getElementById('dateForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            document.getElementById('dateForm').reset();
-            document.getElementById('confirmationMessage').classList.remove('hidden');
-        });
-    </script>
+</div>
 
 </body>
 </html>

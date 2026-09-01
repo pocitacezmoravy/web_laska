@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rande ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        // Dopň svůj Public Key z EmailJS (Account > API Keys)
+        emailjs.init("zK7oGkzr0hR_ox-t8"); 
+    })();
+</script>
+
+<style>
+* { box-sizing: border-box; }
+body {
+    background-image: linear-gradient(120deg, #fccbdb 0%, #f7f0ac 100%);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+.card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.1);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+}
+h1 { font-family: 'Playfair Display', serif; color: #4a0404; }
+.subtitle { color: #666; margin-bottom: 2rem; }
+form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+input, select, textarea {
+    padding: .8rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-family: inherit;
+}
+textarea { min-height: 80px; }
+.submit-btn {
+    background: #d63384;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+.submit-btn:hover { background: #c42b78; }
+.calendar-btn {
+    width: 100%;
+    margin-top: 12px;
+}
+.calendar-btn:hover { background: #b51f6b; }
+.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+.back-btn {
+    display: inline-block;
+    background: #eee;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+.hidden { display: none; }
+
+/* Styly pro vlastní chybovou bublinu */
+.alert-bubble {
+    background: #ffe3e3;
+    color: #a81c1c;
+    border: 1px solid #f8b4b4;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+#confirmationMessage {
+    padding: 15px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 12px;
+    margin-top: 15px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <a href="index.html" class="back-btn">← Zpět</a>
+    <h1>Půjdeš se mnou na rande? ❤️</h1>
+    <p class="subtitle">Vyber termín a aktivitu.</p>
+
+    <!-- Chybová bublina -->
+    <div id="errorBubble" class="alert-bubble hidden"></div>
+
+    <form id="dateForm" novalidate>
+        <label for="date">Kdy vyrazíme?</label>
+        <input type="date" id="date">
+
+        <label for="time">V kolik?</label>
+        <input type="time" id="time" value="18:00">
+
+        <label for="activity">Co budeme dělat?</label>
+        <select id="activity">
+            <option value="">Vyber...</option>
+            <option>Kino a večeře 🍿</option>
+            <option>Procházka a piknik 🧺</option>
+            <option>Výlet do přírody 🌲</option>
+            <option>Deskovky a pizza 🍕</option>
+            <option>Nechám to na tobě 😘</option>
+        </select>
+
+        <label for="note">Speciální přání?</label>
+        <textarea id="note" placeholder="Napiš svůj nápad..."></textarea>
+
+        <button type="submit" id="submitBtn" class="submit-btn">❤️ Ano, ráda!</button>
+    </form>
+
+    <div id="confirmationMessage" class="hidden">
+        <div>Super! Už se moc těším! 🥰</div>
+        <button type="button" id="calendarBtn" class="submit-btn calendar-btn">
+            📅 Přidat do Apple Kalendáře
+        </button>
+    </div>
+</div>
+
+<script>
+let confirmedEvent = null;
+
+document.getElementById("dateForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const rawDate = document.getElementById("date").value;
+    const timeVal = document.getElementById("time").value;
+    const activityVal = document.getElementById("activity").value;
+    const noteVal = document.getElementById("note").value;
+    const errorBubble = document.getElementById("errorBubble");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Kontrola vyplnění polí
+    if (!rawDate && !activityVal) {
+        errorBubble.textContent = "Lásko, nevyplnila jsi datum ani co bys chtěla dělat! ❤️";
+        errorBubble.classList.remove("hidden");
+        return;
+    }
+
+    if (!rawDate) {
+        errorBubble.textContent = "Lásko, nevyplnila jsi datum, kdy vyrazíme! ❤️";
+        errorBubble.classList.remove("hidden");
+        return;
+    }
+
+    if (!timeVal) {
+        errorBubble.textContent = "Lásko, nevyplnila jsi, v kolik vyrazíme! ❤️";
+        errorBubble.classList.remove("hidden");
+        return;
+    }
+
+    if (!activityVal) {
+        errorBubble.textContent = "Lásko, nevyplnila jsi, co bys chtěla dělat! ❤️";
+        errorBubble.classList.remove("hidden");
+        return;
+    }
+
+    const [year, month, day] = rawDate.split("-");
+    const formattedDate = `${day}.${month}.${year}`;
+
+    errorBubble.classList.add("hidden");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Odesílám... 💌";
+
+    const templateParams = {
+        date_val: formattedDate,
+        time_val: timeVal,
+        activity_val: activityVal,
+        note_val: noteVal || "Žádné speciální přání"
+    };
+
+    emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
+        .then(function(response) {
+            // Uložíme údaje pro Apple Kalendář
+            confirmedEvent = {
+                date: rawDate,
+                time: timeVal,
+                activity: activityVal,
+                note: noteVal || "Žádné speciální přání"
+            };
+
+            document.getElementById("dateForm").classList.add("hidden");
+            document.getElementById("confirmationMessage").classList.remove("hidden");
+        }, function(error) {
+            errorBubble.textContent = "Něco se nepovedlo při odesílání, zkus to prosím znovu! 🥺";
+            errorBubble.classList.remove("hidden");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "❤️ Ano, ráda!";
+        });
+});
+
+// Vytvoří .ics soubor kompatibilní s Apple Kalendářem
+document.getElementById("calendarBtn").addEventListener("click", function() {
+    if (!confirmedEvent) return;
+
+    const [year, month, day] = confirmedEvent.date.split("-").map(Number);
+    const [hours, minutes] = confirmedEvent.time.split(":").map(Number);
+
+    // Schůzka trvá 2 hodiny
+    const start = new Date(year, month - 1, day, hours, minutes);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+    function formatICSDate(date) {
+        const pad = n => String(n).padStart(2, "0");
+        // Lokální čas bez převodu časového pásma – Apple Kalendář ho interpretuje lokálně.
+        return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+    }
+
+    function escapeICS(value) {
+        return String(value)
+            .replace(/\\/g, "\\\\")
+            .replace(/\n/g, "\\n")
+            .replace(/,/g, "\\,")
+            .replace(/;/g, "\\;");
+    }
+
+    const uid = "rande-" + Date.now() + "@moj-rande";
+
+    const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Moje Rande//CZ",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "BEGIN:VEVENT",
+        `UID:${uid}`,
+        `DTSTAMP:${formatICSDate(new Date())}`,
+        `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`,
+        `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
+        `SUMMARY:${escapeICS("Rande ❤️ – " + confirmedEvent.activity)}`,
+        `DESCRIPTION:${escapeICS(confirmedEvent.note)}`,
+        "END:VEVENT",
+        "END:VCALENDAR"
+    ].join("\r\n");
+
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "rande.ics";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+</script></script>
+
+</body>
+</html>
