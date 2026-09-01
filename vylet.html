@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rande 💖</title>
+<title>Výlet 🎒</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
 html, body { width: 100%; min-height: 100vh; }
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: linear-gradient(rgba(30, 10, 20, 0.55), rgba(30, 10, 20, 0.55)), url("https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1920&q=80");
+    background: linear-gradient(rgba(15, 25, 20, 0.52), rgba(15, 25, 20, 0.52)), url("https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1920&q=80");
     background-size: cover; background-position: center; background-attachment: fixed;
     display: flex; justify-content: center; align-items: center; padding: 24px 16px; position: relative; color: #2d3748;
 }
@@ -55,68 +55,74 @@ input, select, textarea {
     width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 14px;
     font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85); color: #2d3748; outline: none;
 }
-input:focus, select:focus, textarea:focus { border-color: #d53f8c; background: #ffffff; box-shadow: 0 0 0 4px rgba(237, 100, 166, 0.2); }
+input:focus, select:focus, textarea:focus { border-color: #2b6cb0; background: #ffffff; box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.2); }
 textarea { min-height: 90px; resize: vertical; }
 
 button {
     border: none; padding: 14px 28px; border-radius: 14px; cursor: pointer; font-weight: 700;
     font-size: 0.95rem; font-family: inherit; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
-.submit-btn { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; width: 100%; box-shadow: 0 8px 20px rgba(213, 63, 140, 0.35); margin-top: 8px; }
+.submit-btn { background: linear-gradient(135deg, #2b6cb0 0%, #3182ce 100%); color: white; width: 100%; box-shadow: 0 8px 20px rgba(49, 130, 206, 0.35); margin-top: 8px; }
 .btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; margin-top: 10px; border: 1px solid rgba(203, 213, 224, 0.6); }
 .hidden { display: none !important; }
 .alert-bubble { background: rgba(254, 215, 215, 0.95); color: #9b2c2c; border: 1px solid #feb2b2; padding: 12px; border-radius: 14px; margin-bottom: 16px; font-weight: 600; }
-#confirmationMessage { padding: 24px; background: rgba(254, 218, 230, 0.95); color: #702459; border-radius: 18px; margin-top: 10px; font-weight: 600; }
+#confirmationMessage { padding: 24px; background: rgba(198, 246, 213, 0.95); color: #22543d; border-radius: 18px; margin-top: 10px; font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="floating-container">
-    <div class="floating-item">💖</div>
-    <div class="floating-item">🌹</div>
-    <div class="floating-item">✨</div>
-    <div class="floating-item">🥂</div>
-    <div class="floating-item">💌</div>
+    <div class="floating-item">🍃</div>
+    <div class="floating-item">☀️</div>
+    <div class="floating-item">☁️</div>
+    <div class="floating-item">🌲</div>
+    <div class="floating-item">🧭</div>
 </div>
 
 <div class="card">
-    <h1>Kam zajdeme na rande? 💖</h1>
-    <p class="subtitle">Naplánuj náš společný romantický čas.</p>
+    <h1>Kam vyrazíme? 🎒</h1>
+    <p class="subtitle">Vyber destinaci a naplánuj náš společný výlet.</p>
 
     <div id="errorBubble" class="alert-bubble hidden"></div>
 
-    <form id="dateForm" novalidate>
+    <form id="tripForm" novalidate>
         <div class="form-group">
-            <label for="date">Kdy to bude?</label>
+            <label for="date">Kdy pojedeme?</label>
             <input type="date" id="date">
         </div>
         <div class="form-group">
-            <label for="time">V kolik hodin?</label>
-            <input type="time" id="time">
-        </div>
-        <div class="form-group">
-            <label for="place">Kam vyrazíme?</label>
-            <select id="place">
-                <option value="">Vyber místo...</option>
-                <option>Do oblíbené kavárny na něco dobrého ☕</option>
-                <option>Na luxusní večeři 🍷</option>
-                <option>Na procházku při západu slunce 🌅</option>
-                <option>Do divadla nebo za kulturou 🎭</option>
-                <option>Nechám to jako překvapení ✨</option>
+            <label for="destination">Jaký typ výletu?</label>
+            <select id="destination">
+                <option value="">Vyber typ výletu...</option>
+                <option>Hory a krásné výhledy ⛰️</option>
+                <option>Město, památky a káva 🏰</option>
+                <option>Někam k vodě 🌊</option>
+                <option>Tajemná zřícenina nebo les 🌲</option>
+                <option>Nechám to jako překvapení 🗺️</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="note">Nějaké tajné přání?</label>
-            <textarea id="note" placeholder="Napiš, co by sis přála..."></textarea>
+            <label for="transport">Čím se tam dostaneme?</label>
+            <select id="transport">
+                <option value="">Vyber dopravu...</option>
+                <option>Autem (pořádný roadtrip) 🚗</option>
+                <option>Vlakem (pohodička s výhledem) 🚂</option>
+                <option>Na kole (pro sportovce) 🚲</option>
+                <option>Pěšky (po svých) 🥾</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="note">Co nesmíme zapomenout?</label>
+            <textarea id="note" placeholder="Napiš, co vzít s sebou..."></textarea>
         </div>
         <div>
-            <button type="submit" id="submitBtn" class="submit-btn">💖 Naplánovat rande!</button>
+            <button type="submit" id="submitBtn" class="submit-btn">🎒 Zabalit batoh a jet!</button>
             <button type="button" class="btn-back" id="backBtn">⬅ Zpět</button>
         </div>
     </form>
 
     <div id="confirmationMessage" class="hidden">
-        <div style="margin-bottom: 15px;">Rande domluveno a kalendář stažen! Už se na tebe nesmírně těším! 🥰</div>
+        <div style="margin-bottom: 15px;">Výlet naplánován a kalendář stažen! Už teď se nemůžu dočkat! 🌲🥰</div>
         <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
     </div>
 </div>
@@ -124,17 +130,17 @@ button {
 <script>
 document.getElementById("backBtn").addEventListener("click", () => history.back());
 
-document.getElementById("dateForm").addEventListener("submit", function(e) {
+document.getElementById("tripForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const rawDate = document.getElementById("date").value;
-    const timeVal = document.getElementById("time").value;
-    const placeVal = document.getElementById("place").value;
+    const destVal = document.getElementById("destination").value;
+    const transVal = document.getElementById("transport").value;
     const noteVal = document.getElementById("note").value;
     const errorBubble = document.getElementById("errorBubble");
     const submitBtn = document.getElementById("submitBtn");
 
-    if (!rawDate || !timeVal || !placeVal) {
-        errorBubble.textContent = "Lásko, chybí ti vyplnit datum, čas nebo místo! 🥺";
+    if (!rawDate || !destVal || !transVal) {
+        errorBubble.textContent = "Lásko, chybí ti vyplnit datum, místo nebo doprava! 🥺";
         errorBubble.classList.remove("hidden");
         return;
     }
@@ -144,56 +150,53 @@ document.getElementById("dateForm").addEventListener("submit", function(e) {
 
     errorBubble.classList.add("hidden");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Odesílám pozvánku... 💌";
+    submitBtn.textContent = "Plánuji trasu... 🧭";
 
     const templateParams = {
         date_val: formattedDate,
-        time_val: timeVal,
-        activity_val: "💖 Rande: " + placeVal,
+        activity_val: "🎒 Výlet: " + destVal,
+        time_val: "Doprava: " + transVal,
         note_val: noteVal || "Nic speciálního nepsala"
     };
 
     emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
         .then(() => {
-            // Automatické vytvoření a stažení .ics souboru pro rande
+            // Automatické generování a stažení .ics souboru
             const [y, m, d] = rawDate.split("-").map(Number);
-            const [hours, minutes] = timeVal.split(":").map(Number);
-            
-            const start = new Date(y, m - 1, d, hours, minutes);
-            // Rande bude trvat výchozí 2 hodiny
-            const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+            const start = new Date(y, m - 1, d, 9, 0);
+            const end = new Date(y, m - 1, d, 17, 0);
 
             function formatICSDate(date) {
                 const pad = n => String(n).padStart(2, "0");
                 return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
             }
 
-            const uid = "rande-" + Date.now() + "@moje-stranka";
+            const uid = "vylet-" + Date.now() + "@moje-stranka";
             const ics = [
-                "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Rande//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+                "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Výlet//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
                 "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${formatICSDate(new Date())}`,
                 `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`, `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
-                `SUMMARY:💖 Rande – ${placeVal}`, `DESCRIPTION:Poznámka: ${noteVal || "Nic speciálního"}`,
-                "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Nezapomeň, dnes máme rande! 🥰", "TRIGGER:-PT2H", "END:VALARM",
+                `SUMMARY:🎒 Výlet – ${destVal}`, `DESCRIPTION:Doprava: ${transVal}\\nS sebou: ${noteVal || "Nic speciálního"}`,
+                "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Zítra jedeme na výlet! 🌲", "TRIGGER:-P1D", "END:VALARM",
                 "END:VEVENT", "END:VCALENDAR"
             ].join("\r\n");
 
             const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.href = url; link.download = "rande.ics";
+            link.href = url; link.download = "vylet.ics";
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
             setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-            // Zobrazení potvrzení
-            document.getElementById("dateForm").classList.add("hidden");
+            // Zobrazení úspěšné zprávy
+            document.getElementById("tripForm").classList.add("hidden");
             document.getElementById("confirmationMessage").classList.remove("hidden");
         })
         .catch(() => {
             errorBubble.textContent = "Něco se pokazilo, zkus to prosím znovu! 🥺";
             errorBubble.classList.remove("hidden");
             submitBtn.disabled = false;
-            submitBtn.textContent = "💖 Naplánovat rande!";
+            submitBtn.textContent = "🎒 Zabalit batoh a jet!";
         });
 });
 </script>

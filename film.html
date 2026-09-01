@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Výběr Filmu ❤️</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("zK7oGkzr0hR_ox-t8"); 
+    })();
+</script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100vh;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: 
+        linear-gradient(rgba(10, 12, 20, 0.85), rgba(10, 12, 20, 0.85)),
+        url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: -10%;
+    left: 5%;
+    width: 650px;
+    height: 130vh;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.12),
+        rgba(255, 255, 255, 0.03),
+        transparent
+    );
+    transform: rotate(-15deg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    color: #ffd54a;
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    animation: floatStar linear infinite;
+}
+
+@keyframes floatStar {
+    from {
+        transform: translateY(105vh) scale(0.8);
+        opacity: 0;
+    }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    to {
+        transform: translateY(-120vh) scale(1.3);
+        opacity: 0;
+    }
+}
+
+.particle:nth-child(1) { left: 10%; animation-duration: 11s; }
+.particle:nth-child(2) { left: 28%; animation-duration: 15s; animation-delay: 2s; }
+.particle:nth-child(3) { left: 50%; animation-duration: 13s; animation-delay: 1s; }
+.particle:nth-child(4) { left: 72%; animation-duration: 16s; animation-delay: 4s; }
+.particle:nth-child(5) { left: 90%; animation-duration: 10s; animation-delay: 3s; }
+
+.container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 40px 35px;
+    border-radius: 28px;
+    box-shadow: 
+        0 25px 80px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 183, 3, 0.05);
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 10;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    line-height: 1.4;
+}
+
+.section-title {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+}
+
+.film-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.film-option {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+.film-option:hover {
+    transform: translateY(-2px);
+    border-color: rgba(247, 215, 116, 0.6);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.film-option label {
+    width: 100%;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.film-option.selected {
+    border-color: #f7d774;
+    background: rgba(247, 215, 116, 0.08);
+    box-shadow: 0 0 20px rgba(247, 215, 116, 0.15);
+}
+
+.film-option.selected label {
+    color: #ffd54a;
+}
+
+.film-option input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-right: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.film-option input[type="radio"]:checked {
+    border-color: #ffd54a;
+    background: #ffd54a;
+}
+
+.film-option input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #111;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+button {
+    border: none;
+    padding: 14px 24px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #d4af37, #f7d774);
+    color: #111;
+    flex: 1;
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+
+.btn-random {
+    background: linear-gradient(135deg, #ff9f1c, #ffbf69);
+    color: #111;
+    flex: 1;
+    box-shadow: 0 6px 18px rgba(255, 159, 28, 0.25);
+}
+
+.btn-confirm:hover, .btn-random:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+.btn-back {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.result-card {
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(247, 215, 116, 0.3);
+    padding: 24px;
+    border-radius: 18px;
+    text-align: center;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-card h2 {
+    color: #ffd54a;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.result-card h3 {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.result-card p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="particles-container">
+    <div class="particle">✨</div>
+    <div class="particle">⭐</div>
+    <div class="particle">✨</div>
+    <div class="particle">⭐</div>
+    <div class="particle">✨</div>
+</div>
+
+<div class="container">
+    <h1>🎬 Filmový večer 🍿</h1>
+    <p class="subtitle">Vyber žánr a najdi ideální film pro dnešní kino noc ✨</p>
+
+    <form id="filmForm">
+        <div class="film-selection" id="genreList">
+            <div class="film-option">
+                <input type="radio" id="mood1" name="mood" value="romantika">
+                <label for="mood1">💕 Romantika</label>
+            </div>
+            <div class="film-option">
+                <input type="radio" id="mood2" name="mood" value="komedie">
+                <label for="mood2">😂 Komedie</label>
+            </div>
+            <div class="film-option">
+                <input type="radio" id="mood3" name="mood" value="dobrodruzstvi">
+                <label for="mood3">🚀 Dobrodružné</label>
+            </div>
+            <div class="film-option">
+                <input type="radio" id="mood4" name="mood" value="special">
+                <label for="mood4">💖 Davidovo doporučení</label>
+            </div>
+        </div>
+
+        <div id="movieSelection"></div>
+
+        <div class="button-group">
+            <div class="action-buttons">
+                <button type="submit" class="btn-confirm" id="mainConfirmBtn">❤️ Vybrat žánr</button>
+            </div>
+            <button type="button" class="btn-back" id="backBtn">⬅ Zpět</button>
+        </div>
+
+        <div id="randomResult"></div>
+    </form>
+</div>
+
+<script>
+const movies = {
+    romantika: ["Titanic", "The Notebook", "La La Land", "Pýcha a předsudek", "Me Before You"],
+    komedie: ["50x a stále poprvé", "Deník Bridget Jonesové", "Yes Man", "The Proposal", "Jak ztratit kluka v 10 dnech"],
+    dobrodruzstvi: ["Interstellar", "Inception", "Avatar", "The Martian", "Ready Player One"]
+};
+
+function enableSelection(groupName) {
+    document.querySelectorAll('.film-option').forEach(option => {
+        option.onclick = () => {
+            const radio = option.querySelector(`input[name="${groupName}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            }
+        };
+    });
+
+    document.querySelectorAll(`input[name="${groupName}"]`).forEach(radio => {
+        radio.onchange = () => {
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(item => {
+                item.closest('.film-option').classList.remove('selected');
+            });
+            radio.closest('.film-option').classList.add('selected');
+        };
+    });
+}
+
+enableSelection('mood');
+
+document.getElementById('filmForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const selectedGenre = document.querySelector('input[name="mood"]:checked');
+    if (!selectedGenre) return;
+
+    if (selectedGenre.value === 'special') {
+        const movieName = "Láska nebeská (Davidovo doporučení)";
+        sendEmailNotification(movieName);
+        
+        document.getElementById('randomResult').innerHTML = `
+            <div class="result-card">
+                <h2>💖 Davidovo doporučení</h2>
+                <h3>Láska nebeská</h3>
+                <p>Ať už budete koukat na jakýkoliv film,<br>hlavně si užijte společný večer ❤️</p>
+            </div>
+        `;
+        return;
+    }
+
+    const selectedMovies = movies[selectedGenre.value];
+    document.getElementById('genreList').style.display = 'none';
+
+    document.getElementById('movieSelection').innerHTML = `
+        <h2 class="section-title">🎬 Vyber film</h2>
+        <div class="film-selection" id="movieList">
+            ${selectedMovies.map((movie, index) => `
+                <div class="film-option">
+                    <input type="radio" name="movie" id="movie${index}" value="${movie}">
+                    <label for="movie${index}">${movie}</label>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    document.querySelector('.action-buttons').innerHTML = `
+        <button type="button" class="btn-random" id="randomMovieBtn">🎲 Náhodný</button>
+        <button type="button" class="btn-confirm" id="confirmMovieBtn">🍿 Vybrat</button>
+    `;
+
+    enableSelection('movie');
+
+    document.getElementById('randomMovieBtn').onclick = () => {
+        const movie = selectedMovies[Math.floor(Math.random() * selectedMovies.length)];
+        sendEmailNotification(movie);
+        showMovie(movie);
+    };
+
+    document.getElementById('confirmMovieBtn').onclick = () => {
+        const movie = document.querySelector('input[name="movie"]:checked');
+        if (!movie) return;
+        sendEmailNotification(movie.value);
+        showMovie(movie.value);
+    };
+});
+
+function sendEmailNotification(movieName) {
+    const templateParams = {
+        date_val: new Date().toLocaleDateString('cs-CZ'),
+        time_val: "Večer",
+        activity_val: "🎬 Filmový večer: " + movieName,
+        note_val: "🍿 Připraven popcorn, deka a skvělý film ❤️"
+    };
+
+    emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
+        .then(() => console.log("Film úspěšně odeslán na e-mail!"))
+        .catch((err) => console.error("Chyba e-mailu:", err));
+}
+
+function showMovie(movie) {
+    document.getElementById('randomResult').innerHTML = `
+        <div class="result-card">
+            <h2>🎬 Dnešní film</h2>
+            <h3>${movie}</h3>
+            <p>🍿 Připrav popcorn, deku a užijte si společný večer ❤️</p>
+        </div>
+    `;
+}
+
+document.getElementById('backBtn').addEventListener('click', () => {
+    const genreList = document.getElementById('genreList');
+
+    if (genreList.style.display === 'none') {
+        genreList.style.display = 'flex';
+        document.querySelector('.action-buttons').innerHTML = `
+            <button type="submit" class="btn-confirm" id="mainConfirmBtn">❤️ Vybrat žánr</button>
+        `;
+        document.getElementById('movieSelection').innerHTML = '';
+        document.getElementById('randomResult').innerHTML = '';
+        document.querySelectorAll('input[name="movie"]').forEach(radio => radio.checked = false);
+    } else {
+        history.back();
+    }
+});
+</script>
+
+</body>
+</html>

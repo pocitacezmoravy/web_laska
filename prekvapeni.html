@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Čeká tě překvapení! 🎁</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("zK7oGkzr0hR_ox-t8"); 
+    })();
+</script>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; min-height: 100vh; }
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: radial-gradient(circle at 50% 30%, rgba(255, 107, 107, 0.15), transparent 60%), linear-gradient(135deg, #0d0414 0%, #1a0b2e 50%, #31145a 100%);
+    background-attachment: fixed;
+    display: flex; justify-content: center; align-items: center;
+    padding: 24px 16px; position: relative; color: #ffffff; overflow-x: hidden;
+}
+.floating-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
+.floating-item {
+    position: absolute; font-size: 24px; animation: float 12s infinite ease-in-out; bottom: -60px; pointer-events: none;
+    background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+@keyframes float {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
+    20% { opacity: 0.9; } 80% { opacity: 0.9; }
+    100% { opacity: 0; transform: translateY(-115vh) rotate(360deg) scale(1.2); }
+}
+.floating-item:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 11s; }
+.floating-item:nth-child(2) { left: 25%; animation-delay: 3s; animation-duration: 14s; }
+.floating-item:nth-child(3) { left: 50%; animation-delay: 1s; animation-duration: 12s; }
+.floating-item:nth-child(4) { left: 75%; animation-delay: 4s; animation-duration: 15s; }
+.floating-item:nth-child(5) { left: 90%; animation-delay: 2s; animation-duration: 10s; }
+
+.card {
+    background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); padding: 40px 28px; border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 0 50px rgba(236, 72, 153, 0.25);
+    max-width: 440px; width: 100%; text-align: center; position: relative; z-index: 10;
+}
+.card::before {
+    content: "🎁"; position: absolute; top: -24px; left: 50%; transform: translateX(-50%); font-size: 40px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b); width: 60px; height: 60px; display: flex;
+    align-items: center; justify-content: center; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.8);
+}
+h1 { color: #ffffff; font-size: 1.8rem; font-weight: 800; margin-top: 10px; margin-bottom: 6px; }
+.subtitle { color: #e2e8f0; font-size: 0.95rem; margin-bottom: 24px; font-weight: 500; }
+.scratch-card-container {
+    position: relative; width: 100%; height: 220px; margin: 0 auto 20px auto; border-radius: 20px;
+    overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.3); border: 2px solid rgba(255, 215, 0, 0.6); user-select: none;
+}
+.secret-content {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+    padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #2d3748;
+}
+.secret-content h2 { color: #d97706; font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+.secret-content p { font-size: 0.95rem; color: #4a5568; line-height: 1.4; }
+canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; touch-action: none; transition: opacity 0.6s ease; }
+
+.planning-section {
+    display: none; text-align: left; margin-top: 15px; background: rgba(255, 255, 255, 0.08);
+    padding: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.planning-section label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #f7fafc; }
+.planning-section input {
+    width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.9); font-family: inherit; color: #333;
+}
+button {
+    border: none; padding: 12px 20px; border-radius: 14px; cursor: pointer; font-weight: 700;
+    font-size: 0.9rem; font-family: inherit; transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #ffffff; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
+.btn-back { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); }
+.alert-msg { background: #ffdede; color: #900; padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; text-align: center; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="floating-container">
+    <div class="floating-item">🎁</div>
+    <div class="floating-item">✨</div>
+    <div class="floating-item">❓</div>
+    <div class="floating-item">🎉</div>
+    <div class="floating-item">❤️</div>
+</div>
+
+<div class="card">
+    <h1>Mám pro tebe něco!</h1>
+    <p class="subtitle" id="subtext">Překvapení je schované pod vrstvou. Setři ji a zjisti, co tě čeká!</p>
+
+    <div class="scratch-card-container">
+        <div class="secret-content">
+            <h2>🎉 PŘEKVAPENÍ ODHALENO!</h2>
+            <p><strong>Romantický víkendový pobyt & Wellness</strong><br><span style="font-size: 0.8rem; color: #666;">Teď už zbývá jen vybrat, kdy vyrazíme! 🥰</span></p>
+        </div>
+        <canvas id="scratchCanvas"></canvas>
+    </div>
+
+    <div id="planningSection" class="planning-section">
+        <div id="errorMsg" class="alert-msg hidden">Vyplň prosím datum i čas!</div>
+        <label for="dateInput">📅 Kdy to podnikneme?</label>
+        <input type="date" id="dateInput">
+        <label for="timeInput">⏰ V kolik hodin?</label>
+        <input type="time" id="timeInput" value="18:00">
+        <button type="button" id="confirmPlanBtn" class="btn-primary">✨ Potvrdit termín a odeslat</button>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const canvas = document.getElementById("scratchCanvas");
+const ctx = canvas.getContext("2d");
+let isRevealed = false;
+
+function initCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, "#ffe066"); grad.addColorStop(0.5, "#fbbf24"); grad.addColorStop(1, "#b45309");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#451a03";
+    ctx.font = "800 15px 'Plus Jakarta Sans', sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("🎁 SETŘI A ODHAL PŘEKVAPENÍ 🎁", canvas.width / 2, canvas.height / 2);
+}
+
+let isScratching = false;
+function scratch(x, y) {
+    if (isRevealed) return;
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill();
+    checkScratchPercentage();
+}
+
+function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    let x = e.touches ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    let y = e.touches ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    return { x, y };
+}
+
+function checkScratchPercentage() {
+    if (isRevealed) return;
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let transparentPixels = 0;
+    for (let i = 3; i < pixels.length; i += 4) { if (pixels[i] === 0) transparentPixels++; }
+    if ((transparentPixels / (pixels.length / 4)) * 100 > 40) {
+        isRevealed = true;
+        canvas.style.opacity = "0";
+        setTimeout(() => canvas.style.display = "none", 600);
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        document.getElementById("planningSection").style.display = "block";
+        document.getElementById("subtext").textContent = "Skvělé! Teď vyber termín, kdy si překvapení užijeme.";
+    }
+}
+
+document.getElementById("confirmPlanBtn").addEventListener("click", function() {
+    const rawDate = document.getElementById("dateInput").value;
+    const timeVal = document.getElementById("timeInput").value;
+    const errorMsg = document.getElementById("errorMsg");
+
+    if (!rawDate || !timeVal) { errorMsg.classList.remove("hidden"); return; }
+    errorMsg.classList.add("hidden");
+
+    const [year, month, day] = rawDate.split("-");
+    const formattedDate = `${day}.${month}.${year}`;
+
+    const templateParams = {
+        date_val: formattedDate,
+        time_val: timeVal,
+        activity_val: "🎁 Stírací los: Romantický víkendový pobyt & Wellness",
+        note_val: "Užijeme si to spolu! ❤️"
+    };
+
+    const btn = document.getElementById("confirmPlanBtn");
+    btn.disabled = true;
+    btn.textContent = "Odesílám a ukládám... 💌";
+
+    emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
+        .then(() => console.log("E-mail úspěšně odeslán!"))
+        .catch((err) => console.error("Chyba e-mailu:", err));
+
+    const [yNum, mNum, dNum] = rawDate.split("-").map(Number);
+    const [hNum, minNum] = timeVal.split(":").map(Number);
+    const start = new Date(yNum, mNum - 1, dNum, hNum, minNum);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+    function formatICSDate(date) {
+        const pad = n => String(n).padStart(2, "0");
+        return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+    }
+
+    const uid = "prekvapeni-" + Date.now() + "@moje-stranka";
+    const ics = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Překvapení//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+        "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${formatICSDate(new Date())}`,
+        `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`, `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
+        `SUMMARY:🎁 Romantický víkendový pobyt & Wellness`, `DESCRIPTION:Užijeme si to spolu! ❤️`,
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Zítra tě čeká překvapení! ❤️", "TRIGGER:-P1D", "END:VALARM",
+        "END:VEVENT", "END:VCALENDAR"
+    ].join("\r\n");
+
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; link.download = "prekvapeni.ics";
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+
+    setTimeout(() => {
+        URL.revokeObjectURL(url);
+        btn.textContent = "Hotovo! Kalendář stažen 🥰";
+    }, 1000);
+});
+
+canvas.addEventListener("mousedown", (e) => { isScratching = true; const p = getPos(e); scratch(p.x, p.y); });
+window.addEventListener("mousemove", (e) => { if (!isScratching) return; const p = getPos(e); scratch(p.x, p.y); });
+window.addEventListener("mouseup", () => isScratching = false);
+canvas.addEventListener("touchstart", (e) => { isScratching = true; const p = getPos(e); scratch(p.x, p.y); });
+canvas.addEventListener("touchmove", (e) => { if (!isScratching) return; const p = getPos(e); scratch(p.x, p.y); });
+canvas.addEventListener("touchend", () => isScratching = false);
+window.onload = initCanvas;
+</script>
+</body>
+</html>

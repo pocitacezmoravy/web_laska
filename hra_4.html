@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zamilované pexeso 🧩</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdf2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+.card-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 360px; text-align: center; }
+h2 { margin-bottom: 10px; color: #db2777; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+.memory-card { aspect-ratio: 1; background: #f472b6; border: none; border-radius: 10px; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+.memory-card.flipped, .memory-card.matched { background: white; border: 2px solid #f472b6; cursor: default; }
+#message { margin-top: 15px; font-weight: bold; color: #be185d; min-height: 24px; }
+</style>
+</head>
+<body>
+<div class="card-container">
+    <h2>Zamilované pexeso 🧩</h2>
+    <p style="font-size: 0.9rem; color: #4b5568;">Najdi všechny páry stejných symbolů!</p>
+    <div class="grid" id="gameGrid"></div>
+    <div id="message"></div>
+</div>
+
+<script>
+const emojis = ['💖', '☕', '🌹', '✈️'];
+let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+let flippedCards = [];
+let matchedPairs = 0;
+const grid = document.getElementById('gameGrid');
+
+cards.forEach((symbol, index) => {
+    const btn = document.createElement('button');
+    btn.classList.add('memory-card');
+    btn.dataset.symbol = symbol;
+    btn.dataset.index = index;
+    btn.textContent = '❓';
+    btn.onclick = () => flipCard(btn, symbol);
+    grid.appendChild(btn);
+});
+
+function flipCard(card, symbol) {
+    if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length === 2) return;
+    
+    card.textContent = symbol;
+    card.classList.add('flipped');
+    flippedCards.push(card);
+
+    if (flippedCards.length === 2) {
+        const [first, second] = flippedCards;
+        if (first.dataset.symbol === second.dataset.symbol) {
+            first.classList.add('matched');
+            second.classList.add('matched');
+            flippedCards = [];
+            matchedPairs++;
+            if (matchedPairs === emojis.length) {
+                document.getElementById('message').textContent = "Gratuluji, lásko! Vyhrála jsi moje srdce! 🥰";
+            }
+        } else {
+            setTimeout(() => {
+                first.textContent = '❓';
+                first.classList.remove('flipped');
+                second.textContent = '❓';
+                second.classList.remove('flipped');
+                flippedCards = [];
+            }, 800);
+        }
+    }
+}
+</script>
+</body>
+</html>

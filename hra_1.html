@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulačka lásky ❤️</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; min-height: 100vh; }
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(rgba(40, 10, 25, 0.5), rgba(40, 10, 25, 0.5)), url("https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover; background-position: center; background-attachment: fixed;
+    display: flex; justify-content: center; align-items: center; padding: 24px 16px; position: relative; color: #2d3748;
+}
+
+.floating-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
+.floating-item {
+    position: absolute; font-size: 22px; animation: float 14s infinite linear; bottom: -60px; pointer-events: none;
+    background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.4);
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+@keyframes float {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
+    15% { opacity: 1; } 85% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-115vh) rotate(360deg) scale(1.15); }
+}
+.floating-item:nth-child(1) { left: 8%; animation-delay: 0s; animation-duration: 12s; }
+.floating-item:nth-child(2) { left: 28%; animation-delay: 3s; animation-duration: 15s; }
+.floating-item:nth-child(3) { left: 50%; animation-delay: 1s; animation-duration: 13s; }
+.floating-item:nth-child(4) { left: 72%; animation-delay: 5s; animation-duration: 16s; }
+.floating-item:nth-child(5) { left: 88%; animation-delay: 2s; animation-duration: 11s; }
+
+.card {
+    background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(20px); padding: 40px 32px; border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); max-width: 480px; width: 100%; text-align: center; position: relative; z-index: 10;
+}
+h1 { color: #1a202c; font-size: 1.75rem; font-weight: 700; margin-bottom: 6px; }
+.subtitle { color: #4a5568; font-size: 0.95rem; margin-bottom: 24px; font-weight: 500; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; text-align: left; margin-bottom: 1.25rem; }
+label { font-size: 0.88rem; font-weight: 700; color: #2d3748; }
+input {
+    width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 14px;
+    font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85); color: #2d3748; outline: none;
+}
+input:focus { border-color: #d53f8c; background: #ffffff; box-shadow: 0 0 0 4px rgba(237, 100, 166, 0.2); }
+
+button {
+    border: none; padding: 14px 28px; border-radius: 14px; cursor: pointer; font-weight: 700;
+    font-size: 0.95rem; font-family: inherit; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+}
+.submit-btn { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; box-shadow: 0 8px 20px rgba(213, 63, 140, 0.35); margin-top: 8px; }
+.submit-btn:hover { transform: translateY(-1px); }
+.btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; margin-top: 10px; border: 1px solid rgba(203, 213, 224, 0.6); }
+.btn-back:hover { background: rgba(226, 232, 240, 0.9); }
+
+#result { margin-top: 20px; font-size: 1.1rem; font-weight: 700; color: #97266d; line-height: 1.5; }
+.alert-bubble { background: rgba(254, 215, 215, 0.95); color: #9b2c2c; border: 1px solid #feb2b2; padding: 12px; border-radius: 14px; margin-bottom: 16px; font-weight: 600; display: none; }
+</style>
+</head>
+<body>
+
+<div class="floating-container">
+    <div class="floating-item">💖</div>
+    <div class="floating-item">🌹</div>
+    <div class="floating-item">✨</div>
+    <div class="floating-item">💌</div>
+    <div class="floating-item">💘</div>
+</div>
+
+<div class="card">
+    <h1>Kalkulačka lásky ❤️</h1>
+    <p class="subtitle">Zjisti, jak moc jsme pro sebe stvoření.</p>
+
+    <div id="errorBubble" class="alert-bubble">Zadej obě jména, lásko! 🥺</div>
+
+    <div class="form-group">
+        <label for="name1">Tvoje jméno</label>
+        <input type="text" id="name1" placeholder="Např. Anička">
+    </div>
+    <div class="form-group">
+        <label for="name2">Moje jméno</label>
+        <input type="text" id="name2" placeholder="Např. Honzík">
+    </div>
+
+    <div>
+        <button onclick="calculate()" class="submit-btn">💖 Spočítat lásku</button>
+        <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function calculate() {
+    const n1 = document.getElementById('name1').value.trim();
+    const n2 = document.getElementById('name2').value.trim();
+    const errorBubble = document.getElementById('errorBubble');
+
+    if(!n1 || !n2) {
+        errorBubble.style.display = "block";
+        document.getElementById('result').innerHTML = "";
+        return;
+    }
+
+    errorBubble.style.display = "none";
+    document.getElementById('result').innerHTML = "❤️ Shoda: 100 %! <br><span style='font-weight: 500; font-size: 0.95rem; color: #4a5568;'>Tohle je sázka na jistotu, jsme pro sebe absolutně stvoření! 🥰</span>";
+}
+</script>
+</body>
+</html>
