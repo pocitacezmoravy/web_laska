@@ -82,11 +82,11 @@ button {
 
     <div class="form-group">
         <label for="name1">Tvoje jméno</label>
-        <input type="text" id="name1" placeholder="Např. Anička">
+        <input type="text" id="name1" placeholder="Napiš jméno...">
     </div>
     <div class="form-group">
         <label for="name2">Moje jméno</label>
-        <input type="text" id="name2" placeholder="Např. Honzík">
+        <input type="text" id="name2" placeholder="Napiš jméno...">
     </div>
 
     <div>
@@ -98,19 +98,33 @@ button {
 </div>
 
 <script>
+function normalizeText(text) {
+    return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+
 function calculate() {
-    const n1 = document.getElementById('name1').value.trim();
-    const n2 = document.getElementById('name2').value.trim();
+    const rawN1 = document.getElementById('name1').value;
+    const rawN2 = document.getElementById('name2').value;
     const errorBubble = document.getElementById('errorBubble');
 
-    if(!n1 || !n2) {
+    if(!rawN1.trim() || !rawN2.trim()) {
         errorBubble.style.display = "block";
         document.getElementById('result').innerHTML = "";
         return;
     }
 
     errorBubble.style.display = "none";
-    document.getElementById('result').innerHTML = "❤️ Shoda: 100 %! <br><span style='font-weight: 500; font-size: 0.95rem; color: #4a5568;'>Tohle je sázka na jistotu, jsme pro sebe absolutně stvoření! 🥰</span>";
+
+    const n1 = normalizeText(rawN1);
+    const n2 = normalizeText(rawN2);
+
+    const isAdaDavid = (n1.includes("ada") && n2.includes("david")) || (n1.includes("david") && n2.includes("ada"));
+
+    if (isAdaDavid) {
+        document.getElementById('result').innerHTML = "❤️ Shoda: 100 %! <br><span style='font-weight: 500; font-size: 0.95rem; color: #4a5568;'>Áďa a David? Tohle je sázka na jistotu, jste pro sebe absolutně stvoření! 🥰✨</span>";
+    } else {
+        document.getElementById('result').innerHTML = "💔 Shoda: 0 %! <br><span style='font-weight: 500; font-size: 0.95rem; color: #4a5568;'>Tohle nemá šanci, počítá se jen Áďa a David! 😉</span>";
+    }
 }
 </script>
 </body>
