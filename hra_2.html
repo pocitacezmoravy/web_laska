@@ -4,81 +4,111 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kolo štěstí 🎡</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root {
+    --primary: #ff477e;
+    --primary-dark: #d90429;
+    --accent: #ffb703;
+    --bg-gradient: radial-gradient(circle at 50% 20%, #2b1055 0%, #7597de 50%, #190828 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --text-main: #2b1055;
+    --text-muted: #6c757d;
+}
+
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
-    background: radial-gradient(circle at center, #1b4332 0%, #081c15 100%); 
+    background: var(--bg-gradient); 
     display: flex; 
     justify-content: center; 
     align-items: center; 
     min-height: 100vh; 
     margin: 0; 
     padding: 20px; 
+    overflow-x: hidden;
 }
+
 .card { 
-    background: rgba(255, 255, 255, 0.95); 
-    backdrop-filter: blur(20px); 
-    padding: 35px 30px; 
-    border-radius: 32px; 
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(43, 138, 62, 0.2); 
+    background: var(--card-bg); 
+    backdrop-filter: blur(25px); 
+    -webkit-backdrop-filter: blur(25px);
+    padding: 40px 30px; 
+    border-radius: 36px; 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8); 
     width: 100%; 
     max-width: 420px; 
     text-align: center; 
-    border: 1px solid rgba(255,255,255,0.8); 
+    border: 1px solid rgba(255,255,255,0.6); 
+    position: relative;
 }
-h2 { color: #1b4332; font-size: 1.8rem; margin-bottom: 6px; font-weight: 800; letter-spacing: -0.5px; }
-p { color: #52796f; font-size: 0.95rem; margin-bottom: 25px; font-weight: 600; }
+
+h2 { 
+    color: var(--text-main); 
+    font-size: 2rem; 
+    margin-bottom: 8px; 
+    font-weight: 800; 
+    letter-spacing: -0.5px; 
+}
+
+p { 
+    color: var(--text-muted); 
+    font-size: 1rem; 
+    margin-bottom: 30px; 
+    font-weight: 600; 
+}
 
 .wheel-container { 
     position: relative; 
-    width: 290px; 
-    height: 290px; 
-    margin: 0 auto 25px auto; 
+    width: 310px; 
+    height: 310px; 
+    margin: 0 auto 30px auto; 
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
 }
+
 .wheel { 
     width: 100%; 
     height: 100%; 
     border-radius: 50%; 
-    border: 8px solid #ffffff; 
+    border: 10px solid #ffffff; 
     position: relative; 
     overflow: hidden; 
-    /* 5 výsečí po 72 stupních s prémiovými jemnými pastelovými barvami */
     background: conic-gradient(
-        #d8f3dc 0deg 72deg, 
-        #b7e4c7 72deg 144deg, 
-        #95d5b2 144deg 216deg, 
-        #74c69d 216deg 288deg, 
-        #52b788 288deg 360deg
+        #ffadad 0deg 72deg, 
+        #ffd6a5 72deg 144deg, 
+        #fdffb6 144deg 216deg, 
+        #caffbf 216deg 288deg, 
+        #9bf6ff 288deg 360deg
     ); 
     transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.12, 1); 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 20px rgba(0,0,0,0.1); 
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.1); 
 }
+
 .pointer { 
     position: absolute; 
-    top: -18px; 
+    top: -12px; 
     left: 50%; 
     transform: translateX(-50%); 
     width: 0; 
     height: 0; 
     border-left: 14px solid transparent; 
     border-right: 14px solid transparent; 
-    border-bottom: 26px solid #e63946; 
+    border-bottom: 28px solid #ff0054; 
     z-index: 20; 
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); 
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)); 
 }
+
 .wheel-center-dot {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     background: #ffffff;
-    border: 4px solid #2d6a4f;
+    border: 4px solid #ff0054;
     border-radius: 50%;
     z-index: 10;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 .wheel-text { 
@@ -87,66 +117,88 @@ p { color: #52796f; font-size: 0.95rem; margin-bottom: 25px; font-weight: 600; }
     height: 100%; 
     top: 0; 
     left: 0; 
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 800; 
-    color: #081c15; 
+    color: #2b1055; 
     pointer-events: none; 
 }
+
 .wheel-text span { 
     position: absolute; 
     top: 50%; 
     left: 50%; 
-    width: 110px;
+    width: 30px;
     height: 30px;
     margin-top: -15px;
-    margin-left: 28px;
-    text-align: left;
-    transform-origin: left center; 
-    transform: rotate(var(--deg));
+    margin-left: -15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center; 
+    transform: rotate(var(--deg)) translate(75px) rotate(90deg);
     white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.9);
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
 
 button { 
     border: none; 
-    padding: 15px 24px; 
-    border-radius: 16px; 
+    padding: 16px 24px; 
+    border-radius: 18px; 
     font-weight: 700; 
     font-size: 1rem; 
     font-family: inherit; 
     cursor: pointer; 
     width: 100%; 
-    transition: all 0.25s ease; 
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
 }
+
 .spin-btn { 
-    background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%); 
+    background: linear-gradient(135deg, #ff0054 0%, #ff5400 100%); 
     color: white; 
-    box-shadow: 0 8px 20px rgba(45, 106, 79, 0.4); 
+    box-shadow: 0 10px 25px rgba(255, 0, 84, 0.4); 
     margin-bottom: 12px; 
 }
+
 .spin-btn:hover:not(:disabled) { 
-    transform: translateY(-2px); 
-    box-shadow: 0 12px 25px rgba(45, 106, 79, 0.5); 
+    transform: translateY(-3px); 
+    box-shadow: 0 15px 30px rgba(255, 0, 84, 0.5); 
 }
+
+.spin-btn:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
 .spin-btn:disabled { 
     opacity: 0.6; 
     cursor: not-allowed; 
+    transform: none;
 }
+
 .btn-back { 
-    background: #edf2f7; 
-    color: #4a5568; 
-    border: 1px solid #e2e8f0; 
+    background: rgba(255, 255, 255, 0.7); 
+    color: var(--text-main); 
+    border: 1px solid rgba(0,0,0,0.06); 
 }
+
 .btn-back:hover { 
-    background: #e2e8f0; 
+    background: rgba(255, 255, 255, 0.95); 
 }
 
 #prize { 
-    margin-top: 22px; 
-    font-size: 1.2rem; 
+    margin-top: 24px; 
+    font-size: 1.25rem; 
     font-weight: 800; 
-    color: #2d6a4f; 
+    color: var(--text-main); 
     min-height: 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -160,11 +212,11 @@ button {
         <div class="wheel-center-dot"></div>
         <div class="wheel" id="wheel">
             <div class="wheel-text">
-                <span style="--deg: 36deg;">🥞 Snídaně</span>
-                <span style="--deg: 108deg;">💆‍♀️ Masáž</span>
-                <span style="--deg: 180deg;">🍿 Kino</span>
-                <span style="--deg: 252deg;">🍷 Večeře</span>
-                <span style="--deg: 324deg;">🌲 Výlet</span>
+                <span style="--deg: 36deg;">1</span>
+                <span style="--deg: 108deg;">2</span>
+                <span style="--deg: 180deg;">3</span>
+                <span style="--deg: 252deg;">4</span>
+                <span style="--deg: 324deg;">5</span>
             </div>
         </div>
     </div>
