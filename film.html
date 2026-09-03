@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
     (function(){
@@ -218,7 +217,7 @@ h1 {
     display: none;
 }
 
-.custom-input-box input {
+.custom-input-box input, .date-time-box input {
     width: 100%;
     padding: 12px 16px;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -231,7 +230,7 @@ h1 {
     transition: all 0.25s ease;
 }
 
-.custom-input-box input:focus {
+.custom-input-box input:focus, .date-time-box input:focus {
     border-color: #ffd54a;
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 0 10px rgba(255, 213, 74, 0.2);
@@ -239,6 +238,25 @@ h1 {
 
 .custom-input-box input::placeholder {
     color: rgba(255, 255, 255, 0.45);
+}
+
+.date-time-section {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 15px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.date-time-box label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+    display: block;
 }
 
 /* Styly pro chybovou bublinu */
@@ -265,7 +283,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 28px;
+    margin-top: 24px;
 }
 
 .action-buttons {
@@ -397,6 +415,18 @@ button {
 
         <div id="movieSelection"></div>
 
+        <div class="date-time-section" id="dateTimeSection" style="display: none;">
+            <div class="date-time-box">
+                <label for="dateVal">📅 Kdy to bude?</label>
+                <input type="date" id="dateVal">
+            </div>
+            <div class="date-time-box">
+                <label for="timeVal">⏰ V kolik hodin?</label>
+                <input type="time" id="timeVal">
+            </div>
+            <div id="calendarError"></div>
+        </div>
+
         <div class="button-group">
             <div class="action-buttons">
                 <button type="submit" class="btn-confirm" id="mainConfirmBtn">❤️ Vybrat žánr</button>
@@ -433,7 +463,6 @@ function enableSelection(groupName) {
             });
             radio.closest('.film-option').classList.add('selected');
 
-            // Skrytí chybových bublin při změně výběru
             document.getElementById('genreError').innerHTML = '';
             const movieErr = document.getElementById('movieError');
             if (movieErr) movieErr.innerHTML = '';
@@ -487,13 +516,34 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
 
     if (selectedGenre.value === 'special') {
         const movieName = "Pretty woman (Davidovo doporučení)";
-        sendEmailNotification(movieName);
         
+        // Zobrazení výběru data a času, pokud ještě nejsou vidět
+        const dateTimeSection = document.getElementById('dateTimeSection');
+        if (dateTimeSection.style.display === 'none') {
+            dateTimeSection.style.display = 'flex';
+            document.getElementById('randomResult').innerHTML = `
+                <div class="error-bubble" style="margin-top: 15px;"><span>👇</span> Vyber prosím datum a čas rande níže a klikni znovu!</div>
+            `;
+            return;
+        }
+
+        const dateVal = document.getElementById('dateVal').value;
+        const timeVal = document.getElementById('timeVal').value;
+
+        if (!dateVal || !timeVal) {
+            document.getElementById('calendarError').innerHTML = `
+                <div class="error-bubble"><span>⚠️</span> Prosím vyber datum i čas pro kalendář!</div>
+            `;
+            return;
+        }
+
+        processSelection(movieName, dateVal, timeVal);
+
         document.getElementById('randomResult').innerHTML = `
             <div class="result-card">
                 <h2>💖 Davidovo doporučení</h2>
                 <h3>Pretty woman</h3>
-                <p>Ať už budete koukat na jakýkoliv film,<br>hlavně si užijte společný večer ❤️</p>
+                <p>Ať už budete koukat na jakýkoliv film,<br>hlavně si užijte společný večer ❤️<br><br><small style="color: #ffd54a;">📧 E-mail odeslán a kalendář stažen!</small></p>
             </div>
         `;
         return;
@@ -523,6 +573,9 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
         </div>
     `;
 
+    // Zobrazíme pole pro datum a čas
+    document.getElementById('dateTimeSection').style.display = 'flex';
+
     document.querySelector('.action-buttons').innerHTML = `
         ${selectedMovies.length > 0 ? '<button type="button" class="btn-random" id="randomMovieBtn">🎲 Náhodný</button>' : ''}
         <button type="button" class="btn-confirm" id="confirmMovieBtn">🍿 Vybrat</button>
@@ -533,8 +586,18 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
     const randomBtn = document.getElementById('randomMovieBtn');
     if (randomBtn) {
         randomBtn.onclick = () => {
+            const dateVal = document.getElementById('dateVal').value;
+            const timeVal = document.getElementById('timeVal').value;
+
+            if (!dateVal || !timeVal) {
+                document.getElementById('calendarError').innerHTML = `
+                    <div class="error-bubble"><span>⚠️</span> Prosím vyber datum i čas pro kalendář!</div>
+                `;
+                return;
+            }
+
             const movie = selectedMovies[Math.floor(Math.random() * selectedMovies.length)];
-            sendEmailNotification(movie);
+            processSelection(movie, dateVal, timeVal);
             showMovie(movie);
         };
     }
@@ -558,22 +621,69 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
             movieName = customMovieVal;
         }
 
-        sendEmailNotification(movieName);
+        const dateVal = document.getElementById('dateVal').value;
+        const timeVal = document.getElementById('timeVal').value;
+
+        if (!dateVal || !timeVal) {
+            document.getElementById('calendarError').innerHTML = `
+                <div class="error-bubble"><span>⚠️</span> Prosím vyber datum i čas pro kalendář!</div>
+            `;
+            return;
+        }
+
+        processSelection(movieName, dateVal, timeVal);
         showMovie(movieName);
     };
 });
 
-function sendEmailNotification(movieName) {
+function processSelection(movieName, dateVal, timeVal) {
+    // 1. Odeslání emailu přes EmailJS
+    const [year, month, day] = dateVal.split("-");
+    const formattedDate = `${day}.${month}.${year}`;
+
     const templateParams = {
-        date_val: new Date().toLocaleDateString('cs-CZ'),
-        time_val: "Večer",
+        date_val: formattedDate,
+        time_val: timeVal,
         activity_val: "🎬 Filmový večer: " + movieName,
-        note_val: "🍿 Připraven popcorn, deka a skvělý film ❤️"
+        note_val: "🍿 Připraven popcorn, deka a skvělý film ❤️",
+        to_email: "tvojemail@seznam.cz" // Upravte si případně cíl dle potřeby v EmailJS šabloně
     };
 
     emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
         .then(() => console.log("Film úspěšně odeslán na e-mail!"))
         .catch((err) => console.error("Chyba e-mailu:", err));
+
+    // 2. Generování a stažení .ics souboru (kalendář)
+    const [y, m, d] = dateVal.split("-").map(Number);
+    const [hours, minutes] = timeVal.split(":").map(Number);
+    
+    const start = new Date(y, m - 1, d, hours, minutes);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // výchozí délka 2 hodiny
+
+    function formatICSDate(date) {
+        const pad = n => String(n).padStart(2, "0");
+        return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+    }
+
+    const uid = "film-" + Date.now() + "@moje-stranka";
+    const ics = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Filmovy Vecer//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+        "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${formatICSDate(new Date())}`,
+        `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`, `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
+        `SUMMARY:🎬 Filmový večer: ${movieName}`, `DESCRIPTION:🍿 Připraven popcorn, deka a skvělý film ❤️`,
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Nezapomeň, dnes vás čeká filmový večer! 🥰", "TRIGGER:-PT2H", "END:VALARM",
+        "END:VEVENT", "END:VCALENDAR"
+    ].join("\r\n");
+
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; 
+    link.download = "filmovy-vecer.ics";
+    document.body.appendChild(link); 
+    link.click(); 
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function showMovie(movie) {
@@ -581,7 +691,7 @@ function showMovie(movie) {
         <div class="result-card">
             <h2>🎬 Dnešní film</h2>
             <h3>${movie}</h3>
-            <p>🍿 Připrav popcorn, deku a užijte si společný večer ❤️</p>
+            <p>🍿 Připrav popcorn, deku a užijte si společný večer ❤️<br><br><small style="color: #ffd54a;">📧 E-mail odeslán a kalendář stažen!</small></p>
         </div>
     `;
 }
@@ -591,6 +701,7 @@ document.getElementById('backBtn').addEventListener('click', () => {
 
     if (genreList.style.display === 'none') {
         genreList.style.display = 'flex';
+        document.getElementById('dateTimeSection').style.display = 'none';
         document.querySelector('.action-buttons').innerHTML = `
             <button type="submit" class="btn-confirm" id="mainConfirmBtn">❤️ Vybrat žánr</button>
         `;
