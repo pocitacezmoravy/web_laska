@@ -7,8 +7,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
     (function(){
@@ -43,30 +44,57 @@ body {
 .floating-item:nth-child(5) { left: 88%; animation-delay: 2s; animation-duration: 11s; }
 
 .card {
-    background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(20px); padding: 40px 32px; border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); max-width: 480px; width: 100%; text-align: center; position: relative; z-index: 10;
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 35px 30px; border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); max-width: 440px; width: 100%; text-align: center; position: relative; z-index: 10;
 }
-h1 { color: #1a202c; font-size: 1.75rem; font-weight: 700; margin-bottom: 6px; }
-.subtitle { color: #4a5568; font-size: 0.95rem; margin-bottom: 24px; font-weight: 500; }
-form { display: flex; flex-direction: column; gap: 1.25rem; text-align: left; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 0.88rem; font-weight: 700; color: #2d3748; }
+h1 { color: #1a202c; font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: #4a5568; font-size: 0.9rem; margin-bottom: 20px; font-weight: 500; }
+
+/* Automat styly */
+.wheel-container { 
+    position: relative; 
+    width: 140px; 
+    height: 140px; 
+    margin: 0 auto 20px auto; 
+    background: #0d0a18;
+    border: 3px solid #d53f8c;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(213, 63, 140, 0.3), inset 0 6px 15px rgba(0, 0, 0, 0.9);
+}
+.wheel-container::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+    pointer-events: none; z-index: 10;
+}
+.wheel { position: absolute; top: 0; left: 0; width: 100%; transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.12, 1); }
+.wheel span { 
+    display: flex; align-items: center; justify-content: center; height: 140px; 
+    font-size: 2.5rem; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(255,255,255,0.4);
+}
+
+form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+label { font-size: 0.85rem; font-weight: 700; color: #2d3748; }
 input, select, textarea {
-    width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 14px;
-    font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85); color: #2d3748; outline: none;
+    width: 100%; padding: 11px 14px; border: 1px solid rgba(203, 213, 224, 0.8); border-radius: 12px;
+    font-family: inherit; font-size: 0.92rem; background: rgba(255, 255, 255, 0.9); color: #2d3748; outline: none;
 }
-input:focus, select:focus, textarea:focus { border-color: #d53f8c; background: #ffffff; box-shadow: 0 0 0 4px rgba(237, 100, 166, 0.2); }
-textarea { min-height: 90px; resize: vertical; }
+input:focus, select:focus, textarea:focus { border-color: #d53f8c; background: #ffffff; box-shadow: 0 0 0 3px rgba(237, 100, 166, 0.2); }
+textarea { min-height: 70px; resize: vertical; }
 
 button {
-    border: none; padding: 14px 28px; border-radius: 14px; cursor: pointer; font-weight: 700;
-    font-size: 0.95rem; font-family: inherit; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; padding: 13px 24px; border-radius: 12px; cursor: pointer; font-weight: 700;
+    font-size: 0.92rem; font-family: inherit; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
-.submit-btn { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; width: 100%; box-shadow: 0 8px 20px rgba(213, 63, 140, 0.35); margin-top: 8px; }
-.btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; margin-top: 10px; border: 1px solid rgba(203, 213, 224, 0.6); }
+.submit-btn { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; width: 100%; box-shadow: 0 6px 15px rgba(213, 63, 140, 0.35); }
+.spin-btn { background: linear-gradient(135deg, #319795 0%, #2b6cb0 100%); color: white; width: 100%; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(49, 151, 149, 0.35); }
+.btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); }
+
 .hidden { display: none !important; }
-.alert-bubble { background: rgba(254, 215, 215, 0.95); color: #9b2c2c; border: 1px solid #feb2b2; padding: 12px; border-radius: 14px; margin-bottom: 16px; font-weight: 600; }
-#confirmationMessage { padding: 24px; background: rgba(254, 218, 230, 0.95); color: #702459; border-radius: 18px; margin-top: 10px; font-weight: 600; }
+.alert-bubble { background: rgba(254, 215, 215, 0.95); color: #9b2c2c; border: 1px solid #feb2b2; padding: 10px; border-radius: 12px; margin-bottom: 12px; font-weight: 600; font-size: 0.88rem; }
+#confirmationMessage { padding: 22px; background: rgba(254, 218, 230, 0.95); color: #702459; border-radius: 16px; margin-top: 10px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -80,12 +108,29 @@ button {
 </div>
 
 <div class="card">
-    <h1>Kam zajdeme na rande? 💖</h1>
-    <p class="subtitle">Naplánuj náš společný romantický čas.</p>
+    <h1>Automat štěstí 🎰</h1>
+    <p class="subtitle">Roztoč automat a vyber si své dnešní rande!</p>
+
+    <!-- AUTOMAT SEKCE -->
+    <div id="slotMachineSection">
+        <div class="wheel-container">
+            <div class="wheel" id="wheel">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+            </div>
+        </div>
+        <button type="button" class="spin-btn" id="spinBtn" onclick="spin()">Točit automatem! 🎯</button>
+    </div>
 
     <div id="errorBubble" class="alert-bubble hidden"></div>
 
-    <form id="dateForm" novalidate>
+    <!-- FORMULÁŘ (skrytý, dokud se nevytočí výhra) -->
+    <form id="dateForm" class="hidden" novalidate>
+        <div class="form-group" style="background: rgba(213, 63, 140, 0.1); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(213, 63, 140, 0.2);">
+            <label style="color: #b83280;">Vytočená výhra ✨</label>
+            <input type="text" id="place" readonly style="font-weight: 700; color: #b83280; background: transparent; border: none; padding: 4px 0;">
+        </div>
         <div class="form-group">
             <label for="date">Kdy to bude?</label>
             <input type="date" id="date">
@@ -95,46 +140,69 @@ button {
             <input type="time" id="time">
         </div>
         <div class="form-group">
-            <label for="place">Kam vyrazíme?</label>
-            <select id="place">
-                <option value="">Vyber místo...</option>
-                <option>Do oblíbené kavárny na něco dobrého ☕</option>
-                <option>Na luxusní večeři 🍷</option>
-                <option>Na procházku při západu slunce 🌅</option>
-                <option>Do divadla nebo za kulturou 🎭</option>
-                <option>Nechám to jako překvapení ✨</option>
-            </select>
-        </div>
-        <div class="form-group">
             <label for="note">Nějaké tajné přání?</label>
-            <textarea id="note" placeholder="Napiš, co by sis přála..."></textarea>
+            <textarea id="note" placeholder="Napiš poznámku k rande..."></textarea>
         </div>
         <div>
-            <button type="submit" id="submitBtn" class="submit-btn">💖 Naplánovat rande!</button>
-            <button type="button" class="btn-back" id="backBtn">⬅ Zpět</button>
+            <button type="submit" id="submitBtn" class="submit-btn">💖 Odeslat a uložit do kalendáře!</button>
+            <button type="button" class="btn-back" onclick="location.reload()" style="margin-top: 8px;">🔄 Zkusit točit znovu</button>
         </div>
     </form>
 
     <div id="confirmationMessage" class="hidden">
-        <div style="margin-bottom: 15px;">Rande domluveno a kalendář stažen! Už se na tebe nesmírně těším! 🥰</div>
+        <div style="margin-bottom: 15px;">Výhra odeslána e-mailem a kalendář stažen! Už se na to nesmírně těším! 🥰</div>
         <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
     </div>
 </div>
 
 <script>
-document.getElementById("backBtn").addEventListener("click", () => history.back());
+const prizes = [
+    { text: "Snídaně do postele 🥞", index: 0 },
+    { text: "Masáž nohou po celém dni 💆‍♀️", index: 1 },
+    { text: "Kino s velkým popcornem 🍿", index: 2 },
+    { text: "Romantická večeře při svíčkách 🍷", index: 3 },
+    { text: "Výlet do přírody 🌲", index: 4 }
+];
+
+let selectedPrizeText = "";
+
+function spin() {
+    const btn = document.getElementById('spinBtn');
+    const wheel = document.getElementById('wheel');
+    const errorBubble = document.getElementById('errorBubble');
+    
+    btn.disabled = true;
+    errorBubble.classList.add("hidden");
+
+    const randomIndex = Math.floor(Math.random() * prizes.length);
+    const selectedPrize = prizes[randomIndex];
+    selectedPrizeText = selectedPrize.text;
+
+    const itemHeight = 140; 
+    const totalItems = 5;   
+    const extraRounds = 2;
+    const targetOffset = -(selectedPrize.index + extraRounds * totalItems) * itemHeight;
+
+    wheel.style.transform = `translateY(${targetOffset}px)`;
+
+    setTimeout(() => {
+        // Skryjeme automat a zobrazíme formulář s předvyplněnou výhrou
+        document.getElementById('slotMachineSection').classList.add('hidden');
+        document.getElementById('place').value = selectedPrizeText;
+        document.getElementById('dateForm').classList.remove('hidden');
+    }, 4500);
+}
 
 document.getElementById("dateForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const rawDate = document.getElementById("date").value;
     const timeVal = document.getElementById("time").value;
-    const placeVal = document.getElementById("place").value;
     const noteVal = document.getElementById("note").value;
     const errorBubble = document.getElementById("errorBubble");
     const submitBtn = document.getElementById("submitBtn");
 
-    if (!rawDate || !timeVal || !placeVal) {
-        errorBubble.textContent = "Lásko, chybí ti vyplnit datum, čas nebo místo! 🥺";
+    if (!rawDate || !timeVal) {
+        errorBubble.textContent = "Lásko, chybí ti vyplnit datum nebo čas! 🥺";
         errorBubble.classList.remove("hidden");
         return;
     }
@@ -149,39 +217,39 @@ document.getElementById("dateForm").addEventListener("submit", function(e) {
     const templateParams = {
         date_val: formattedDate,
         time_val: timeVal,
-        activity_val: "💖 Rande: " + placeVal,
-        note_val: noteVal || "Nic speciálního nepsala"
+        activity_val: "🎰 Výhra z automatu: " + selectedPrizeText,
+        note_val: noteVal || "Žádná poznámka"
     };
 
+    // Odeslání přes EmailJS
     emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
         .then(() => {
-            // Automatické vytvoření a stažení .ics souboru pro rande
+            // Vytvoření a stažení .ics souboru
             const [y, m, d] = rawDate.split("-").map(Number);
             const [hours, minutes] = timeVal.split(":").map(Number);
             
             const start = new Date(y, m - 1, d, hours, minutes);
-            // Rande bude trvat výchozí 2 hodiny
-            const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+            const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // výchozí 2 hodiny
 
             function formatICSDate(date) {
                 const pad = n => String(n).padStart(2, "0");
                 return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
             }
 
-            const uid = "rande-" + Date.now() + "@moje-stranka";
+            const uid = "automat-" + Date.now() + "@moje-stranka";
             const ics = [
-                "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Rande//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+                "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Automat Stesti//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
                 "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${formatICSDate(new Date())}`,
                 `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`, `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
-                `SUMMARY:💖 Rande – ${placeVal}`, `DESCRIPTION:Poznámka: ${noteVal || "Nic speciálního"}`,
-                "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Nezapomeň, dnes máme rande! 🥰", "TRIGGER:-PT2H", "END:VALARM",
+                `SUMMARY:✨ ${selectedPrizeText}`, `DESCRIPTION:Poznámka: ${noteVal || "Nic speciálního"}`,
+                "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Nezapomeň, dnes tě čeká výhra! 🥰", "TRIGGER:-PT2H", "END:VALARM",
                 "END:VEVENT", "END:VCALENDAR"
             ].join("\r\n");
 
             const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.href = url; link.download = "rande.ics";
+            link.href = url; link.download = "vyhra-rande.ics";
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
             setTimeout(() => URL.revokeObjectURL(url), 1000);
 
@@ -193,7 +261,7 @@ document.getElementById("dateForm").addEventListener("submit", function(e) {
             errorBubble.textContent = "Něco se pokazilo, zkus to prosím znovu! 🥺";
             errorBubble.classList.remove("hidden");
             submitBtn.disabled = false;
-            submitBtn.textContent = "💖 Naplánovat rande!";
+            submitBtn.textContent = "💖 Odeslat a uložit do kalendáře!";
         });
 });
 </script>

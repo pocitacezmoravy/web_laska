@@ -3,262 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kolo štěstí 🎡</title>
+<title>Rande 💖</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("zK7oGkzr0hR_ox-t8"); 
+    })();
+</script>
+
 <style>
-:root {
-    --primary: #ff477e;
-    --primary-dark: #d90429;
-    --accent: #ffb703;
-    --bg-gradient: radial-gradient(circle at 50% 20%, #2b1055 0%, #7597de 50%, #190828 100%);
-    --card-bg: rgba(255, 255, 255, 0.85);
-    --text-main: #2b1055;
-    --text-muted: #6c757d;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; min-height: 100vh; }
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(rgba(30, 10, 20, 0.55), rgba(30, 10, 20, 0.55)), url("https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover; background-position: center; background-attachment: fixed;
+    display: flex; justify-content: center; align-items: center; padding: 24px 16px; position: relative; color: #2d3748;
 }
+.floating-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
+.floating-item {
+    position: absolute; font-size: 22px; animation: float 14s infinite linear; bottom: -60px; pointer-events: none;
+    background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.4);
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+@keyframes float {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
+    15% { opacity: 1; } 85% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-115vh) rotate(360deg) scale(1.15); }
+}
+.floating-item:nth-child(1) { left: 8%; animation-delay: 0s; animation-duration: 12s; }
+.floating-item:nth-child(2) { left: 28%; animation-delay: 3s; animation-duration: 15s; }
+.floating-item:nth-child(3) { left: 50%; animation-delay: 1s; animation-duration: 13s; }
+.floating-item:nth-child(4) { left: 72%; animation-delay: 5s; animation-duration: 16s; }
+.floating-item:nth-child(5) { left: 88%; animation-delay: 2s; animation-duration: 11s; }
 
-body { 
-    font-family: 'Plus Jakarta Sans', sans-serif; 
-    background: var(--bg-gradient); 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
-    margin: 0; 
-    padding: 20px; 
-    overflow-x: hidden;
+.card {
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 35px 30px; border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); max-width: 440px; width: 100%; text-align: center; position: relative; z-index: 10;
 }
-
-.card { 
-    background: var(--card-bg); 
-    backdrop-filter: blur(25px); 
-    -webkit-backdrop-filter: blur(25px);
-    padding: 40px 30px; 
-    border-radius: 36px; 
-    box-shadow: 0 30px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8); 
-    width: 100%; 
-    max-width: 420px; 
-    text-align: center; 
-    border: 1px solid rgba(255,255,255,0.6); 
-    position: relative;
-}
-
-h2 { 
-    color: var(--text-main); 
-    font-size: 2rem; 
-    margin-bottom: 8px; 
-    font-weight: 800; 
-    letter-spacing: -0.5px; 
-}
-
-p { 
-    color: var(--text-muted); 
-    font-size: 1rem; 
-    margin-bottom: 30px; 
-    font-weight: 600; 
-}
+h1 { color: #1a202c; font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: #4a5568; font-size: 0.9rem; margin-bottom: 20px; font-weight: 500; }
 
 .wheel-container { 
     position: relative; 
-    width: 310px; 
-    height: 310px; 
-    margin: 0 auto 30px auto; 
-    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+    width: 140px; 
+    height: 140px; 
+    margin: 0 auto 20px auto; 
+    background: #0d0a18;
+    border: 3px solid #d53f8c;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(213, 63, 140, 0.3), inset 0 6px 15px rgba(0, 0, 0, 0.9);
+}
+.wheel-container::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+    pointer-events: none; z-index: 10;
+}
+.wheel { position: absolute; top: 0; left: 0; width: 100%; transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.12, 1); }
+.wheel span { 
+    display: flex; align-items: center; justify-content: center; height: 140px; 
+    font-size: 2.5rem; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(255,255,255,0.4);
 }
 
-.wheel { 
-    width: 100%; 
-    height: 100%; 
-    border-radius: 50%; 
-    border: 10px solid #ffffff; 
-    position: relative; 
-    overflow: hidden; 
-    background: conic-gradient(
-        #ffadad 0deg 72deg, 
-        #ffd6a5 72deg 144deg, 
-        #fdffb6 144deg 216deg, 
-        #caffbf 216deg 288deg, 
-        #9bf6ff 288deg 360deg
-    ); 
-    transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.12, 1); 
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.1); 
+form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+label { font-size: 0.85rem; font-weight: 700; color: #2d3748; }
+input, select, textarea {
+    width: 100%; padding: 11px 14px; border: 1px solid rgba(203, 213, 224, 0.8); border-radius: 12px;
+    font-family: inherit; font-size: 0.92rem; background: rgba(255, 255, 255, 0.9); color: #2d3748; outline: none;
 }
+input:focus, select:focus, textarea:focus { border-color: #d53f8c; background: #ffffff; box-shadow: 0 0 0 3px rgba(237, 100, 166, 0.2); }
+textarea { min-height: 70px; resize: vertical; }
 
-.pointer { 
-    position: absolute; 
-    top: -12px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    width: 0; 
-    height: 0; 
-    border-left: 14px solid transparent; 
-    border-right: 14px solid transparent; 
-    border-bottom: 28px solid #ff0054; 
-    z-index: 20; 
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25)); 
+button {
+    border: none; padding: 13px 24px; border-radius: 12px; cursor: pointer; font-weight: 700;
+    font-size: 0.92rem; font-family: inherit; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
+.submit-btn { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; width: 100%; box-shadow: 0 6px 15px rgba(213, 63, 140, 0.35); }
+.spin-btn { background: linear-gradient(135deg, #319795 0%, #2b6cb0 100%); color: white; width: 100%; margin-bottom: 10px; box-shadow: 0 6px 15px rgba(49, 151, 149, 0.35); }
+.btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); }
 
-.wheel-center-dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    background: #ffffff;
-    border: 4px solid #ff0054;
-    border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-.wheel-text { 
-    position: absolute; 
-    width: 100%; 
-    height: 100%; 
-    top: 0; 
-    left: 0; 
-    font-size: 16px; 
-    font-weight: 800; 
-    color: #2b1055; 
-    pointer-events: none; 
-}
-
-.wheel-text span { 
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    width: 30px;
-    height: 30px;
-    margin-top: -15px;
-    margin-left: -15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform-origin: center center; 
-    transform: rotate(var(--deg)) translate(75px) rotate(90deg);
-    white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-}
-
-button { 
-    border: none; 
-    padding: 16px 24px; 
-    border-radius: 18px; 
-    font-weight: 700; 
-    font-size: 1rem; 
-    font-family: inherit; 
-    cursor: pointer; 
-    width: 100%; 
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
-}
-
-.spin-btn { 
-    background: linear-gradient(135deg, #ff0054 0%, #ff5400 100%); 
-    color: white; 
-    box-shadow: 0 10px 25px rgba(255, 0, 84, 0.4); 
-    margin-bottom: 12px; 
-}
-
-.spin-btn:hover:not(:disabled) { 
-    transform: translateY(-3px); 
-    box-shadow: 0 15px 30px rgba(255, 0, 84, 0.5); 
-}
-
-.spin-btn:active:not(:disabled) {
-    transform: translateY(-1px);
-}
-
-.spin-btn:disabled { 
-    opacity: 0.6; 
-    cursor: not-allowed; 
-    transform: none;
-}
-
-.btn-back { 
-    background: rgba(255, 255, 255, 0.7); 
-    color: var(--text-main); 
-    border: 1px solid rgba(0,0,0,0.06); 
-}
-
-.btn-back:hover { 
-    background: rgba(255, 255, 255, 0.95); 
-}
-
-#prize { 
-    margin-top: 24px; 
-    font-size: 1.25rem; 
-    font-weight: 800; 
-    color: var(--text-main); 
-    min-height: 40px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.hidden { display: none !important; }
+.alert-bubble { background: rgba(254, 215, 215, 0.95); color: #9b2c2c; border: 1px solid #feb2b2; padding: 10px; border-radius: 12px; margin-bottom: 12px; font-weight: 600; font-size: 0.88rem; }
+#confirmationMessage { padding: 22px; background: rgba(254, 218, 230, 0.95); color: #702459; border-radius: 16px; margin-top: 10px; font-weight: 600; }
 </style>
 </head>
 <body>
+
+<div class="floating-container">
+    <div class="floating-item">💖</div>
+    <div class="floating-item">🌹</div>
+    <div class="floating-item">✨</div>
+    <div class="floating-item">🥂</div>
+    <div class="floating-item">💌</div>
+</div>
+
 <div class="card">
-    <h2>Kolo štěstí 🎡</h2>
-    <p>Toč a vyhraj dnešní rande!</p>
-    
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <div class="wheel-center-dot"></div>
-        <div class="wheel" id="wheel">
-            <div class="wheel-text">
-                <span style="--deg: 36deg;">1</span>
-                <span style="--deg: 108deg;">2</span>
-                <span style="--deg: 180deg;">3</span>
-                <span style="--deg: 252deg;">4</span>
-                <span style="--deg: 324deg;">5</span>
+    <h1>Automat štěstí 🎰</h1>
+    <p class="subtitle">Roztoč automat a vyber si své dnešní rande!</p>
+
+    <div id="slotMachineSection">
+        <div class="wheel-container">
+            <div class="wheel" id="wheel">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
             </div>
         </div>
+        <button type="button" class="spin-btn" id="spinBtn" onclick="spin()">Točit automatem! 🎯</button>
+        <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
     </div>
 
-    <button class="spin-btn" id="spinBtn" onclick="spin()">Točit kolem! 🎯</button>
-    <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
-    <div id="prize"></div>
+    <div id="errorBubble" class="alert-bubble hidden"></div>
+
+    <form id="dateForm" class="hidden" novalidate>
+        <div class="form-group" style="background: rgba(213, 63, 140, 0.1); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(213, 63, 140, 0.2);">
+            <label style="color: #b83280;">Vytočená výhra ✨</label>
+            <input type="text" id="place" readonly style="font-weight: 700; color: #b83280; background: transparent; border: none; padding: 4px 0;">
+        </div>
+        <div class="form-group">
+            <label for="date">Kdy to bude?</label>
+            <input type="date" id="date">
+        </div>
+        <div class="form-group">
+            <label for="time">V kolik hodin?</label>
+            <input type="time" id="time">
+        </div>
+        <div class="form-group">
+            <label for="note">Nějaké tajné přání?</label>
+            <textarea id="note" placeholder="Napiš poznámku k rande..."></textarea>
+        </div>
+        <div>
+            <button type="submit" id="submitBtn" class="submit-btn">💖 Odeslat a uložit do kalendáře!</button>
+            <button type="button" class="btn-back" onclick="location.reload()" style="margin-top: 8px;">🔄 Zkusit točit znovu</button>
+        </div>
+    </form>
+
+    <div id="confirmationMessage" class="hidden">
+        <div style="margin-bottom: 15px;">Výhra odeslána e-mailem a kalendář stažen! Už se na to nesmírně těším! 🥰</div>
+        <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
+    </div>
 </div>
 
 <script>
 const prizes = [
-    { text: "Snídaně do postele 🥞", angle: 36 },
-    { text: "Masáž nohou po celém dni 💆‍♀️", angle: 108 },
-    { text: "Kino s velkým popcornem 🍿", angle: 180 },
-    { text: "Romantická večeře při svíčkách 🍷", angle: 252 },
-    { text: "Výlet do přírody 🌲", angle: 324 }
+    { text: "Snídaně do postele 🥞", index: 0 },
+    { text: "Masáž nohou po celém dni 💆‍♀️", index: 1 },
+    { text: "Kino s velkým popcornem 🍿", index: 2 },
+    { text: "Romantická večeře při svíčkách 🍷", index: 3 },
+    { text: "Výlet do přírody 🌲", index: 4 }
 ];
 
-let currentRotation = 0;
+let selectedPrizeText = "";
 
 function spin() {
     const btn = document.getElementById('spinBtn');
     const wheel = document.getElementById('wheel');
-    const prizeDiv = document.getElementById('prize');
+    const errorBubble = document.getElementById('errorBubble');
     
     btn.disabled = true;
-    prizeDiv.innerHTML = "Točím kolo štěstí... 🌀";
+    errorBubble.classList.add("hidden");
 
     const randomIndex = Math.floor(Math.random() * prizes.length);
     const selectedPrize = prizes[randomIndex];
+    selectedPrizeText = selectedPrize.text;
 
-    const extraSpins = 360 * 6;
-    const targetAngle = 360 - selectedPrize.angle;
-    currentRotation = extraSpins + targetAngle + (Math.random() * 16 - 8);
+    const itemHeight = 140; 
+    const totalItems = 5;   
+    const extraRounds = 2;
+    const targetOffset = -(selectedPrize.index + extraRounds * totalItems) * itemHeight;
 
-    wheel.style.transform = `rotate(${currentRotation}deg)`;
+    wheel.style.transform = `translateY(${targetOffset}px)`;
 
     setTimeout(() => {
-        prizeDiv.innerHTML = "🎉 Výhra: " + selectedPrize.text;
-        btn.disabled = false;
+        document.getElementById('slotMachineSection').classList.add('hidden');
+        document.getElementById('place').value = selectedPrizeText;
+        document.getElementById('dateForm').classList.remove('hidden');
     }, 4500);
 }
+
+document.getElementById("dateForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const rawDate = document.getElementById("date").value;
+    const timeVal = document.getElementById("time").value;
+    const noteVal = document.getElementById("note").value;
+    const errorBubble = document.getElementById("errorBubble");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (!rawDate || !timeVal) {
+        errorBubble.textContent = "Lásko, chybí ti vyplnit datum nebo čas! 🥺";
+        errorBubble.classList.remove("hidden");
+        return;
+    }
+
+    const [year, month, day] = rawDate.split("-");
+    const formattedDate = `${day}.${month}.${year}`;
+
+    errorBubble.classList.add("hidden");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Odesílám pozvánku... 💌";
+
+    const templateParams = {
+        date_val: formattedDate,
+        time_val: timeVal,
+        activity_val: "🎰 Výhra z automatu: " + selectedPrizeText,
+        note_val: noteVal || "Žádná poznámka",
+        to_email: "tvojemail@seznam.cz"
+    };
+
+    console.log("Odesílám data přes EmailJS...", templateParams);
+
+    emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
+        .then((response) => {
+            console.log("SUCCESS!", response.status, response.text);
+
+            const [y, m, d] = rawDate.split("-").map(Number);
+            const [hours, minutes] = timeVal.split(":").map(Number);
+            
+            const start = new Date(y, m - 1, d, hours, minutes);
+            const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+            function formatICSDate(date) {
+                const pad = n => String(n).padStart(2, "0");
+                return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+            }
+
+            const uid = "automat-" + Date.now() + "@moje-stranka";
+            const ics = [
+                "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Automat Stesti//CZ", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+                "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${formatICSDate(new Date())}`,
+                `DTSTART;TZID=Europe/Prague:${formatICSDate(start)}`, `DTEND;TZID=Europe/Prague:${formatICSDate(end)}`,
+                `SUMMARY:✨ ${selectedPrizeText}`, `DESCRIPTION:Poznámka: ${noteVal || "Nic speciálního"}`,
+                "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Nezapomeň, dnes tě čeká výhra! 🥰", "TRIGGER:-PT2H", "END:VALARM",
+                "END:VEVENT", "END:VCALENDAR"
+            ].join("\r\n");
+
+            const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url; link.download = "vyhra-rande.ics";
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+            document.getElementById("dateForm").classList.add("hidden");
+            document.getElementById("confirmationMessage").classList.remove("hidden");
+        })
+        .catch((error) => {
+            console.error("FAILED...", error);
+            errorBubble.textContent = "Chyba při odesílání: " + (error.text || JSON.stringify(error));
+            errorBubble.classList.remove("hidden");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "💖 Odeslat a uložit do kalendáře!";
+        });
+});
 </script>
 </body>
 </html>
