@@ -9,8 +9,9 @@
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdf2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
 .card-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
 h2 { margin-bottom: 5px; color: #db2777; }
-.btn-back { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); border-radius: 12px; padding: 12px; cursor: pointer; font-weight: 700; font-family: inherit; margin-top: 15px; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-back:hover { background: rgba(226, 232, 240, 1); }
+.btn-action { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); border-radius: 12px; padding: 12px; cursor: pointer; font-weight: 700; font-family: inherit; margin-top: 10px; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-action:hover { background: rgba(226, 232, 240, 1); }
+.btn-restart { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; border: none; box-shadow: 0 6px 15px rgba(213, 63, 140, 0.35); }
 .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 15px; }
 .memory-card { aspect-ratio: 1; background: #f472b6; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
 .memory-card.flipped, .memory-card.matched { background: white; border: 2px solid #f472b6; cursor: default; }
@@ -25,8 +26,11 @@ h2 { margin-bottom: 5px; color: #db2777; }
     <div class="grid" id="gameGrid"></div>
     <div id="message"></div>
 
-    <button type="button" class="btn-back" onclick="history.back()">⬅ Zpět</button>
+    <button type="button" class="btn-action" onclick="history.back()">⬅ Zpět</button>
+    <button type="button" class="btn-action btn-restart" onclick="restartGame()">🔄 Hrát znovu</button>
 </div>
+
+<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/trumpet_fanfare_blaring.ogg"></audio>
 
 <script>
 const emojis = [
@@ -35,20 +39,28 @@ const emojis = [
     '🔥', '💋', '🍓', '🌟', '🎀', '🍰'
 ];
 
-let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
 let flippedCards = [];
 let matchedPairs = 0;
 const grid = document.getElementById('gameGrid');
 
-cards.forEach((symbol, index) => {
-    const btn = document.createElement('button');
-    btn.classList.add('memory-card');
-    btn.dataset.symbol = symbol;
-    btn.dataset.index = index;
-    btn.textContent = '❓';
-    btn.onclick = () => flipCard(btn, symbol);
-    grid.appendChild(btn);
-});
+function initGame() {
+    grid.innerHTML = '';
+    document.getElementById('message').textContent = '';
+    flippedCards = [];
+    matchedPairs = 0;
+
+    let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+
+    cards.forEach((symbol, index) => {
+        const btn = document.createElement('button');
+        btn.classList.add('memory-card');
+        btn.dataset.symbol = symbol;
+        btn.dataset.index = index;
+        btn.textContent = '❓';
+        btn.onclick = () => flipCard(btn, symbol);
+        grid.appendChild(btn);
+    });
+}
 
 function flipCard(card, symbol) {
     if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length === 2) return;
@@ -66,6 +78,9 @@ function flipCard(card, symbol) {
             matchedPairs++;
             if (matchedPairs === emojis.length) {
                 document.getElementById('message').textContent = "Gratuluji, lásko! Zvládla jsi celou 6x6 výzvu! 🥰💖";
+                const sound = document.getElementById('winSound');
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Zvuk blokován prohlížečem"));
             }
         } else {
             setTimeout(() => {
@@ -78,6 +93,12 @@ function flipCard(card, symbol) {
         }
     }
 }
+
+function restartGame() {
+    initGame();
+}
+
+initGame();
 </script>
 </body>
 </html>
