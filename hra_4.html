@@ -6,8 +6,8 @@
 <title>Zamilované pexeso 🧩</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdf2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-.card-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdf2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; }
+.card-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; position: relative; z-index: 10; }
 h2 { margin-bottom: 5px; color: #db2777; }
 .btn-action { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); border-radius: 12px; padding: 12px; cursor: pointer; font-weight: 700; font-family: inherit; margin-top: 10px; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-action:hover { background: rgba(226, 232, 240, 1); }
@@ -15,7 +15,23 @@ h2 { margin-bottom: 5px; color: #db2777; }
 .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 15px; }
 .memory-card { aspect-ratio: 1; background: #f472b6; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
 .memory-card.flipped, .memory-card.matched { background: white; border: 2px solid #f472b6; cursor: default; }
-#message { margin-top: 15px; font-weight: bold; color: #be185d; min-height: 24px; }
+#message { margin-top: 15px; font-weight: bold; color: #be185d; min-height: 24px; font-size: 1.05rem; }
+
+/* Styl pro padající konfety */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: #f00;
+    top: -10px;
+    z-index: 999;
+    animation: fall linear forwards;
+}
+@keyframes fall {
+    to {
+        transform: translateY(105vh) rotate(720deg);
+    }
+}
 </style>
 </head>
 <body>
@@ -29,8 +45,6 @@ h2 { margin-bottom: 5px; color: #db2777; }
     <button type="button" class="btn-action" onclick="history.back()">⬅ Zpět</button>
     <button type="button" class="btn-action btn-restart" onclick="restartGame()">🔄 Hrát znovu</button>
 </div>
-
-<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/trumpet_fanfare_blaring.ogg" preload="auto"></audio>
 
 <script>
 const emojis = [
@@ -48,6 +62,8 @@ function initGame() {
     document.getElementById('message').textContent = '';
     flippedCards = [];
     matchedPairs = 0;
+
+    document.querySelectorAll('.confetti').forEach(c => c.remove());
 
     let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
 
@@ -78,11 +94,7 @@ function flipCard(card, symbol) {
             matchedPairs++;
             if (matchedPairs === emojis.length) {
                 document.getElementById('message').textContent = "Gratuluji, lásko! Zvládla jsi celou 6x6 výzvu! 🥰💖";
-                const sound = document.getElementById('winSound');
-                sound.currentTime = 0;
-                sound.play().catch(error => {
-                    console.log("Přehrání zvuku vyžaduje interakci uživatele:", error);
-                });
+                launchConfetti();
             }
         } else {
             setTimeout(() => {
@@ -93,6 +105,24 @@ function flipCard(card, symbol) {
                 flippedCards = [];
             }, 800);
         }
+    }
+}
+
+function launchConfetti() {
+    const colors = ['#ff2a6d', '#05d9e8', '#ffc700', '#39ff14', '#ffffff', '#ff69b4'];
+    for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        confetti.style.opacity = Math.random();
+        confetti.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+            confetti.remove();
+        }, 3500);
     }
 }
 
