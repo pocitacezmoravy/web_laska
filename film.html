@@ -213,6 +213,54 @@ h1 {
     transform: translate(-50%, -50%);
 }
 
+.custom-input-box {
+    margin-top: 4px;
+    display: none;
+}
+
+.custom-input-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.custom-input-box input:focus {
+    border-color: #ffd54a;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 10px rgba(255, 213, 74, 0.2);
+}
+
+.custom-input-box input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* Styly pro chybovou bublinu */
+.error-bubble {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: rgba(255, 87, 87, 0.15);
+    border: 1px solid rgba(255, 87, 87, 0.4);
+    color: #ff8b8b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.error-bubble span {
+    font-size: 1rem;
+}
+
 .button-group {
     display: flex;
     flex-direction: column;
@@ -337,6 +385,14 @@ button {
                 <input type="radio" id="mood4" name="mood" value="special">
                 <label for="mood4">💖 Davidovo doporučení</label>
             </div>
+            <div class="film-option">
+                <input type="radio" id="moodCustom" name="mood" value="vlastni-zanr">
+                <label for="moodCustom">✏️ Vlastní žánr...</label>
+            </div>
+            <div class="custom-input-box" id="customGenreBox">
+                <input type="text" id="customGenreInput" placeholder="Zadej název vlastního žánru...">
+                <div id="genreError"></div>
+            </div>
         </div>
 
         <div id="movieSelection"></div>
@@ -355,8 +411,8 @@ button {
 <script>
 const movies = {
     romantika: ["Titanic", "The Notebook", "La La Land", "Pýcha a předsudek", "Me Before You"],
-    komedie: ["50x a stále poprvé", "Deník Bridget Jonesové", "Yes Man", "The Proposal", "Jak ztratit kluka v 10 dnech"],
-    dobrodruzstvi: ["Interstellar", "Inception", "Avatar", "The Martian", "Ready Player One"]
+    komedie: ["Pelíšky", "S čerty nejsou žerty", "Yes Man", "Babovřesky", "10 pravidel jak sbalit holku"],
+    dobrodruzstvi: ["Interstellar","Avatar", "The Martian", "Ready Player One"]
 };
 
 function enableSelection(groupName) {
@@ -376,6 +432,32 @@ function enableSelection(groupName) {
                 item.closest('.film-option').classList.remove('selected');
             });
             radio.closest('.film-option').classList.add('selected');
+
+            // Skrytí chybových bublin při změně výběru
+            document.getElementById('genreError').innerHTML = '';
+            const movieErr = document.getElementById('movieError');
+            if (movieErr) movieErr.innerHTML = '';
+
+            const customBox = document.getElementById('customGenreBox');
+            if (customBox) {
+                if (document.getElementById('moodCustom').checked) {
+                    customBox.style.display = 'block';
+                    document.getElementById('customGenreInput').focus();
+                } else {
+                    customBox.style.display = 'none';
+                }
+            }
+
+            const customMovieBox = document.getElementById('customMovieBox');
+            if (customMovieBox) {
+                const customMovieRadio = document.getElementById('movieCustom');
+                if (customMovieRadio && customMovieRadio.checked) {
+                    customMovieBox.style.display = 'block';
+                    document.getElementById('customMovieInput').focus();
+                } else {
+                    customMovieBox.style.display = 'none';
+                }
+            }
         };
     });
 }
@@ -387,25 +469,41 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
     const selectedGenre = document.querySelector('input[name="mood"]:checked');
     if (!selectedGenre) return;
 
+    let genreName = selectedGenre.value;
+
+    if (genreName === 'vlastni-zanr') {
+        const customVal = document.getElementById('customGenreInput').value.trim();
+        if (!customVal) {
+            document.getElementById('genreError').innerHTML = `
+                <div class="error-bubble"><span>⚠️</span> Prosím lásko, zadej název vlastního žánru!</div>
+            `;
+            document.getElementById('customGenreInput').focus();
+            return;
+        } else {
+            document.getElementById('genreError').innerHTML = '';
+        }
+        genreName = customVal;
+    }
+
     if (selectedGenre.value === 'special') {
-        const movieName = "Láska nebeská (Davidovo doporučení)";
+        const movieName = "Pretty woman (Davidovo doporučení)";
         sendEmailNotification(movieName);
         
         document.getElementById('randomResult').innerHTML = `
             <div class="result-card">
                 <h2>💖 Davidovo doporučení</h2>
-                <h3>Láska nebeská</h3>
+                <h3>Pretty woman</h3>
                 <p>Ať už budete koukat na jakýkoliv film,<br>hlavně si užijte společný večer ❤️</p>
             </div>
         `;
         return;
     }
 
-    const selectedMovies = movies[selectedGenre.value];
+    const selectedMovies = movies[genreName] || [];
     document.getElementById('genreList').style.display = 'none';
 
     document.getElementById('movieSelection').innerHTML = `
-        <h2 class="section-title">🎬 Vyber film</h2>
+        <h2 class="section-title">🎬 Vyber film (${genreName})</h2>
         <div class="film-selection" id="movieList">
             ${selectedMovies.map((movie, index) => `
                 <div class="film-option">
@@ -413,27 +511,55 @@ document.getElementById('filmForm').addEventListener('submit', function(e) {
                     <label for="movie${index}">${movie}</label>
                 </div>
             `).join('')}
+            
+            <div class="film-option">
+                <input type="radio" name="movie" id="movieCustom" value="vlastni-film">
+                <label for="movieCustom">✏️ Vlastní film...</label>
+            </div>
+            <div class="custom-input-box" id="customMovieBox">
+                <input type="text" id="customMovieInput" placeholder="Zadej název vlastního filmu...">
+                <div id="movieError"></div>
+            </div>
         </div>
     `;
 
     document.querySelector('.action-buttons').innerHTML = `
-        <button type="button" class="btn-random" id="randomMovieBtn">🎲 Náhodný</button>
+        ${selectedMovies.length > 0 ? '<button type="button" class="btn-random" id="randomMovieBtn">🎲 Náhodný</button>' : ''}
         <button type="button" class="btn-confirm" id="confirmMovieBtn">🍿 Vybrat</button>
     `;
 
     enableSelection('movie');
 
-    document.getElementById('randomMovieBtn').onclick = () => {
-        const movie = selectedMovies[Math.floor(Math.random() * selectedMovies.length)];
-        sendEmailNotification(movie);
-        showMovie(movie);
-    };
+    const randomBtn = document.getElementById('randomMovieBtn');
+    if (randomBtn) {
+        randomBtn.onclick = () => {
+            const movie = selectedMovies[Math.floor(Math.random() * selectedMovies.length)];
+            sendEmailNotification(movie);
+            showMovie(movie);
+        };
+    }
 
     document.getElementById('confirmMovieBtn').onclick = () => {
-        const movie = document.querySelector('input[name="movie"]:checked');
-        if (!movie) return;
-        sendEmailNotification(movie.value);
-        showMovie(movie.value);
+        const movieRadio = document.querySelector('input[name="movie"]:checked');
+        if (!movieRadio) return;
+
+        let movieName = movieRadio.value;
+        if (movieName === 'vlastni-film') {
+            const customMovieVal = document.getElementById('customMovieInput').value.trim();
+            if (!customMovieVal) {
+                document.getElementById('movieError').innerHTML = `
+                    <div class="error-bubble"><span>⚠️</span> Prosím lásko, zadej název filmu!</div>
+                `;
+                document.getElementById('customMovieInput').focus();
+                return;
+            } else {
+                document.getElementById('movieError').innerHTML = '';
+            }
+            movieName = customMovieVal;
+        }
+
+        sendEmailNotification(movieName);
+        showMovie(movieName);
     };
 });
 

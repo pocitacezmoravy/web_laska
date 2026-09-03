@@ -106,7 +106,7 @@ button {
 </div>
 
 <div class="card">
-    <h1>Automat štěstí 🎰</h1>
+    <h1>🎰 Automat štěstí</h1>
     <p class="subtitle">Roztoč automat a vyber si své dnešní rande!</p>
 
     <div id="slotMachineSection">
@@ -171,7 +171,20 @@ function spin() {
     btn.disabled = true;
     errorBubble.classList.add("hidden");
 
-    const randomIndex = Math.floor(Math.random() * prizes.length);
+    // Zjištění poslední vytočené položky z paměti prohlížeče
+    const lastIndex = localStorage.getItem("lastPrizeIndex");
+    let randomIndex;
+
+    // Pokusíme se vybrat náhodný index, který je jiný než ten předchozí
+    let attempts = 0;
+    do {
+        randomIndex = Math.floor(Math.random() * prizes.length);
+        attempts++;
+    } while (randomIndex.toString() === lastIndex && attempts < 5);
+
+    // Uložení aktuálního indexu do paměti
+    localStorage.setItem("lastPrizeIndex", randomIndex);
+
     const selectedPrize = prizes[randomIndex];
     selectedPrizeText = selectedPrize.text;
 
@@ -218,12 +231,8 @@ document.getElementById("dateForm").addEventListener("submit", function(e) {
         to_email: "tvojemail@seznam.cz"
     };
 
-    console.log("Odesílám data přes EmailJS...", templateParams);
-
     emailjs.send("service_db6ocwg", "template_w9939jc", templateParams)
         .then((response) => {
-            console.log("SUCCESS!", response.status, response.text);
-
             const [y, m, d] = rawDate.split("-").map(Number);
             const [hours, minutes] = timeVal.split(":").map(Number);
             
