@@ -30,7 +30,7 @@ h2 { margin-bottom: 5px; color: #db2777; }
     <button type="button" class="btn-action btn-restart" onclick="restartGame()">🔄 Hrát znovu</button>
 </div>
 
-<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/trumpet_fanfare_blaring.ogg"></audio>
+<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/trumpet_fanfare_blaring.ogg" preload="auto"></audio>
 
 <script>
 const emojis = [
@@ -80,7 +80,9 @@ function flipCard(card, symbol) {
                 document.getElementById('message').textContent = "Gratuluji, lásko! Zvládla jsi celou 6x6 výzvu! 🥰💖";
                 const sound = document.getElementById('winSound');
                 sound.currentTime = 0;
-                sound.play().catch(e => console.log("Zvuk blokován prohlížečem"));
+                sound.play().catch(error => {
+                    console.log("Přehrání zvuku vyžaduje interakci uživatele:", error);
+                });
             }
         } else {
             setTimeout(() => {
