@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Co budeme dělat? ❤️</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Zamezí všem posuvníkům na celé stránce */
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    color: #2d3748;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Kontejner, který drží srdíčka uvnitř obrazovky */
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Animovaná srdíčka v pozadí */
+.heart {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 12px;
+    height: 12px;
+    transform: rotate(-45deg);
+    animation: float 12s infinite linear;
+    bottom: -20px;
+    pointer-events: none;
+}
+
+.heart:before,
+.heart:after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.heart:before { top: -6px; left: 0; }
+.heart:after { top: 0; left: 6px; }
+
+@keyframes float {
+    0% { opacity: 0; transform: rotate(-45deg) translateY(0) scale(0.8); }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { opacity: 0; transform: rotate(-45deg) translateY(-115vh) scale(1.2); }
+}
+
+.heart:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 10s; }
+.heart:nth-child(2) { left: 25%; animation-delay: 3s; animation-duration: 14s; }
+.heart:nth-child(3) { left: 50%; animation-delay: 1s; animation-duration: 11s; }
+.heart:nth-child(4) { left: 75%; animation-delay: 5s; animation-duration: 13s; }
+.heart:nth-child(5) { left: 90%; animation-delay: 2s; animation-duration: 9s; }
+
+/* Hlavní karta */
+.card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 40px 35px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 10px 15px rgba(0, 0, 0, 0.03);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+.small-question {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    color: #ff477e;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+h1 {
+    color: #1a202c;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-link {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    color: #2d3748;
+    text-decoration: none;
+    padding: 16px 20px;
+    border-radius: 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.btn-link:hover {
+    background: #ffffff;
+    border-color: #ff477e;
+    color: #ff2a6d;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 71, 126, 0.18);
+}
+
+.btn-link:active {
+    transform: translateY(-1px);
+}
+</style>
+</head>
+<body>
+
+<div class="hearts-container">
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+</div>
+
+<div class="card">
+    <div class="small-question">Co bys chtěla dělat?</div>
+    <h1>Vyber si ❤️</h1>
+
+    <div class="menu-options">
+        <a href="rande.html" class="btn-link">❤️ Rande</a>
+        <a href="film.html" class="btn-link">🎬 Filmový večer</a>
+        <a href="vylet.html" class="btn-link">🌲 Výlet</a>
+        <a href="prekvapeni.html" class="btn-link">🎁 Překvapení</a>
+        <a href="hra_1.html" class="btn-link"> ❤️ Kalkulačka lásky</a>
+        <a href="hra_2.html" class="btn-link">🎰 Automat štěstí</a>
+        
+        <a href="hra_4.html" class="btn-link">🧩 Pexeso</a>
+        <a href="index.html" class="btn-link">🏠 Domů</a>
+    </div>
+</div>
+
+</body>
+</html>
