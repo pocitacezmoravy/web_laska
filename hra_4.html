@@ -18,6 +18,7 @@ body {
     align-items: center;
     min-height: 100vh;
     touch-action: manipulation;
+    user-select: none;
 }
 .container {
     background: white;
@@ -27,6 +28,7 @@ body {
     width: 100%;
     max-width: 480px;
     text-align: center;
+    position: relative;
 }
 h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
 .status-box {
@@ -73,7 +75,7 @@ h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
     color: #db2777;
 }
 
-/* PŘESNÉ ROZMĚRY MŘÍŽKY (32px buňky + 2px mezera) */
+/* MŘÍŽKA (32px buňky + 2px mezera) */
 .grid {
     display: grid;
     grid-template-columns: repeat(10, 32px);
@@ -84,6 +86,7 @@ h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
     border-radius: 8px;
     margin-bottom: 10px;
     justify-content: center;
+    position: relative;
 }
 .cell {
     width: 32px;
@@ -125,7 +128,6 @@ input {
     align-items: center;
 }
 
-/* DESIGN LODÍ V DOCKU */
 .ship-item {
     display: flex;
     gap: 2px;
@@ -134,18 +136,10 @@ input {
     border-radius: 6px;
     padding: 2px;
     cursor: pointer;
-    user-select: none;
     box-shadow: 0 3px 6px rgba(2, 132, 199, 0.2);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition: transform 0.1s ease;
 }
-.ship-item:hover {
-    transform: scale(1.03);
-}
-.ship-item.selected {
-    border: 2px solid #ea580c;
-    box-shadow: 0 0 10px rgba(234, 88, 12, 0.6);
-    transform: scale(1.05);
-}
+.ship-item:hover { transform: scale(1.03); }
 
 .ship-segment {
     width: 28px;
@@ -158,15 +152,35 @@ input {
     justify-content: center;
     font-size: 0.75rem;
 }
-
 .ship-segment.bow { border-top-left-radius: 8px; border-bottom-left-radius: 8px; background: #e0f2fe; }
 .ship-segment.stern { border-top-right-radius: 8px; border-bottom-right-radius: 8px; background: #e0f2fe; }
 .ship-segment.body { background: #f0f9ff; }
+
+/* PLOVOUCÍ LOĎ PŘILEPENÁ KE KURZORU */
+#floatingShip {
+    position: fixed;
+    display: none;
+    pointer-events: none;
+    z-index: 1000;
+    gap: 2px;
+    background: #0284c7;
+    border: 2px solid #ea580c;
+    border-radius: 6px;
+    padding: 2px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transform: translate(-15px, -15px);
+}
+#floatingShip.vertical {
+    flex-direction: column;
+}
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
+
+<!-- Plovoucí loď, která se lepí za kurzorem -->
+<div id="floatingShip"></div>
 
 <div class="container">
     <h2>Klasické Lodě ⛵</h2>
@@ -184,8 +198,8 @@ input {
         
         <!-- Umisťování lodí -->
         <div id="placementPhase">
-            <p id="instructionText" style="font-size: 0.8rem; margin: 4px 0; font-weight: 600; color: #0284c7;">1. Klikni na loď v docku, 2. Klikni na políčko v mřížce</p>
-            <button class="btn-secondary" id="rotateBtn" onclick="toggleOrientation()">Směr: Vodorovně ➡️</button>
+            <p id="instructionText" style="font-size: 0.8rem; margin: 4px 0; font-weight: 600; color: #0284c7;">Klikni na loď v docku ➡️ přilepí se ke kurzoru (Mezerník = otočit)</p>
+            <button class="btn-secondary" id="rotateBtn" onclick="toggleOrientation()">Směr: Vodorovně ➡️ (nebo Mezerník)</button>
             <div class="fleet-dock" id="fleetDock"></div>
             <div class="grid" id="placementGrid"></div>
             <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění ⚓</button>
@@ -244,7 +258,24 @@ input {
     ];
     let orientation = 'H'; // 'H' = vodorovně, 'V' = svisle
     let placedShipsMap = {}; // index -> shipId
-    let selectedShip = null; // Právě vybraná loď k umístění
+    let selectedShip = null;
+
+    // Sledování pohybu myši pro plovoucí loď
+    window.addEventListener('mousemove', (e) => {
+        const floating = document.getElementById('floatingShip');
+        if (selectedShip) {
+            floating.style.left = e.clientX + 'px';
+            floating.style.top = e.clientY + 'px';
+        }
+    });
+
+    // Otáčení mezerníkem
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && selectedShip) {
+            e.preventDefault();
+            toggleOrientation();
+        }
+    });
 
     window.joinGame = function() {
         const input = document.getElementById('roomInput').value.trim();
@@ -288,48 +319,69 @@ input {
         dock.innerHTML = '';
         if (availableShips.length === 0) {
             dock.innerHTML = '<span style="font-size:0.85rem; color:#0284c7; font-weight:700;">Všechny lodě jsou na ploše! 🎉</span>';
-            selectedShip = null;
+            cancelSelection();
             return;
         }
         availableShips.forEach(ship => {
             const div = document.createElement('div');
             div.className = 'ship-item';
-            if (selectedShip && selectedShip.id === ship.id) {
-                div.classList.add('selected');
-            }
 
-            div.onclick = () => {
-                selectedShip = ship;
-                renderDock();
-                document.getElementById('instructionText').textContent = `Vybrána loď (${ship.size} dílky). Klikni na hrací plochu!`;
+            div.onclick = (e) => {
+                e.stopPropagation();
+                selectShip(ship);
             };
 
             for (let i = 0; i < ship.size; i++) {
                 const seg = document.createElement('div');
                 seg.className = 'ship-segment';
-                
-                if (ship.size === 1) {
-                    seg.classList.add('bow');
-                    seg.textContent = '⛵';
-                } else if (i === 0) {
-                    seg.classList.add('bow');
-                    seg.textContent = '⚓';
-                } else if (i === ship.size - 1) {
-                    seg.classList.add('stern');
-                    seg.textContent = '🚢';
-                } else {
-                    seg.classList.add('body');
-                    seg.textContent = '⚙️';
-                }
+                if (ship.size === 1) seg.textContent = '⛵';
+                else if (i === 0) seg.textContent = '⚓';
+                else if (i === ship.size - 1) seg.textContent = '🚢';
+                else seg.textContent = '⚙️';
                 div.appendChild(seg);
             }
             dock.appendChild(div);
         });
     }
 
+    function selectShip(ship) {
+        selectedShip = ship;
+        const floating = document.getElementById('floatingShip');
+        floating.innerHTML = '';
+        
+        for (let i = 0; i < ship.size; i++) {
+            const seg = document.createElement('div');
+            seg.className = 'ship-segment';
+            if (ship.size === 1) seg.textContent = '⛵';
+            else if (i === 0) seg.textContent = '⚓';
+            else if (i === ship.size - 1) seg.textContent = '🚢';
+            else seg.textContent = '⚙️';
+            floating.appendChild(seg);
+        }
+        
+        updateFloatingOrientationStyle();
+        floating.style.display = 'flex';
+        document.getElementById('instructionText').textContent = `Máš vybranou loď (${ship.size} dílky). Klikni na mřížku pro umístění (Mezerník otočí).`;
+    }
+
+    function cancelSelection() {
+        selectedShip = null;
+        document.getElementById('floatingShip').style.display = 'none';
+    }
+
     window.toggleOrientation = function() {
         orientation = orientation === 'H' ? 'V' : 'H';
-        document.getElementById('rotateBtn').textContent = orientation === 'H' ? 'Směr: Vodorovně ➡️' : 'Směr: Svisle ⬇️';
+        document.getElementById('rotateBtn').textContent = orientation === 'H' ? 'Směr: Vodorovně ➡️ (nebo Mezerník)' : 'Směr: Svisle ⬇️ (nebo Mezerník)';
+        updateFloatingOrientationStyle();
+    }
+
+    function updateFloatingOrientationStyle() {
+        const floating = document.getElementById('floatingShip');
+        if (orientation === 'V') {
+            floating.classList.add('vertical');
+        } else {
+            floating.classList.remove('vertical');
+        }
     }
 
     function renderPlacementGrid() {
@@ -349,7 +401,7 @@ input {
 
             const currentIndex = i;
             btn.onclick = () => {
-                // Pokud na políčku už loď je, kliknutím ji vrátíme do docku
+                // Pokud klikneme na již umístěnou loď, vrátíme ji do docku
                 if (placedShipsMap[currentIndex]) {
                     const targetShipId = placedShipsMap[currentIndex];
                     let shipSize = parseInt(targetShipId.split('_')[0]);
@@ -360,11 +412,7 @@ input {
                         }
                     }
 
-                    availableShips.push({
-                        id: targetShipId,
-                        size: shipSize
-                    });
-
+                    availableShips.push({ id: targetShipId, size: shipSize });
                     renderPlacementGrid();
                     renderDock();
                     document.getElementById('readyBtn').disabled = true;
@@ -372,7 +420,7 @@ input {
                     return;
                 }
 
-                // Pokud máme vybranou loď, umístíme ji
+                // Pokud máme vybranou plovoucí loď, zkusíme ji položit
                 if (selectedShip) {
                     placeSelectedShip(currentIndex);
                 }
@@ -410,14 +458,13 @@ input {
             placedShipsMap[idx] = selectedShip.id;
         });
 
-        // Odebereme loď z dostupných
         availableShips = availableShips.filter(s => s.id !== selectedShip.id);
-        selectedShip = null;
+        cancelSelection();
 
         renderPlacementGrid();
         renderDock();
 
-        document.getElementById('instructionText').textContent = "1. Klikni na loď v docku, 2. Klikni na políčko v mřížce";
+        document.getElementById('instructionText').textContent = "Klikni na loď v docku ➡️ přilepí se ke kurzoru";
 
         if (availableShips.length === 0) {
             document.getElementById('readyBtn').disabled = false;
