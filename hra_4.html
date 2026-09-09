@@ -31,6 +31,17 @@ body {
     position: relative;
 }
 h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
+.room-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 8px;
+    border: 1px solid #bae6fd;
+}
 .status-box {
     background: #fdf2f8;
     border: 2px dashed #f472b6;
@@ -156,6 +167,132 @@ input {
 .ship-segment.stern { border-top-right-radius: 8px; border-bottom-right-radius: 8px; background: #e0f2fe; }
 .ship-segment.body { background: #f0f9ff; }
 
+/* SEZNAM AKTIVNÍCH MÍSTNOSTÍ */
+.rooms-list {
+    margin-top: 15px;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+.rooms-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 6px;
+}
+.room-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.85rem;
+    gap: 6px;
+}
+.room-name { font-weight: 600; color: #0284c7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.room-actions { display: flex; gap: 4px; }
+
+.btn-join {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+.btn-join:hover { background: #bae6fd; }
+
+.btn-delete {
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+.btn-delete:hover { background: #fecaca; }
+
+/* VLASTNÍ STYLOVÉ MODÁLNÍ OKNO */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-box {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    transform: scale(0.9);
+    transition: transform 0.2s ease;
+}
+.modal-overlay.active .modal-box {
+    transform: scale(1);
+}
+.modal-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+.modal-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+.modal-buttons {
+    display: flex;
+    gap: 8px;
+}
+.btn-modal-cancel {
+    background: #e2e8f0;
+    color: #475569;
+    border: none;
+    border-radius: 10px;
+    padding: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex: 1;
+    cursor: pointer;
+}
+.btn-modal-confirm {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex: 1;
+    cursor: pointer;
+}
+.btn-modal-confirm:hover { background: #dc2626; }
+
 /* PLOVOUCÍ LOĎ PŘILEPENÁ KE KURZORU */
 #floatingShip {
     position: fixed;
@@ -182,18 +319,36 @@ input {
 <!-- Plovoucí loď, která se lepí za kurzorem -->
 <div id="floatingShip"></div>
 
+<!-- Vlastní vyskakovací okno (Modal) -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <div class="modal-title">⛵ Zavřít místnost?</div>
+        <div class="modal-text" id="modalText">Opravdu chceš trvale zavřít tuto místnost?</div>
+        <div class="modal-buttons">
+            <button class="btn-modal-cancel" onclick="closeModal()">Zrušit</button>
+            <button class="btn-modal-confirm" id="modalConfirmBtn">Zavřít místnost</button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <h2>Klasické Lodě ⛵</h2>
     
     <!-- SEKCE PRO PŘIPOJENÍ -->
     <div id="setupSection">
-        <div class="status-box">Zadejte název místnosti pro spárování (např. "lodniparte1")</div>
+        <div class="status-box">Zadej název místnosti nebo vyber níže ze seznamu</div>
         <input type="text" id="roomInput" placeholder="Název místnosti...">
         <button class="btn" onclick="joinGame()">Vstoupit do hry</button>
+
+        <div class="rooms-list">
+            <div class="rooms-title">📋 Otevřené místnosti:</div>
+            <div id="roomsContainer" style="color: #94a3b8; font-size: 0.8rem;">Načítám místnosti...</div>
+        </div>
     </div>
 
     <!-- SEKCE HRY -->
     <div id="gameSection" class="hidden">
+        <div class="room-badge" id="currentRoomBadge">Místnost: -</div>
         <div class="status-box" id="statusMessage">Načítání stavu hry...</div>
         
         <!-- Umisťování lodí -->
@@ -224,7 +379,7 @@ input {
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue, update, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA-RCJcraf1WBLKs48u6521NZ0I1iGtSPxI",
@@ -256,11 +411,95 @@ input {
         { id: '1_3', size: 1 },
         { id: '1_4', size: 1 }
     ];
-    let orientation = 'H'; // 'H' = vodorovně, 'V' = svisle
-    let placedShipsMap = {}; // index -> shipId
+    let orientation = 'H';
+    let placedShipsMap = {};
     let selectedShip = null;
 
-    // Sledování pohybu myši pro plovoucí loď
+    // Obsluha Enteru pro vstupní pole názvu místnosti i pro modální okno
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Enter' || e.key === 'Enter') {
+            const modalActive = document.getElementById('confirmModal').classList.contains('active');
+            
+            if (modalActive) {
+                e.preventDefault();
+                const confirmBtn = document.getElementById('modalConfirmBtn');
+                if (confirmBtn) confirmBtn.click();
+                return;
+            }
+
+            const roomInput = document.getElementById('roomInput');
+            if (document.activeElement === roomInput) {
+                e.preventDefault();
+                window.joinGame();
+            }
+        }
+    });
+
+    window.openDeleteModal = function(rId) {
+        document.getElementById('modalText').textContent = `Opravdu chceš trvale zavřít místnost "${rId}"?`;
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        
+        confirmBtn.onclick = () => {
+            remove(ref(db, 'rooms/' + rId));
+            closeModal();
+        };
+
+        document.getElementById('confirmModal').classList.add('active');
+    }
+
+    window.closeModal = function() {
+        document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const roomsRef = ref(db, 'rooms');
+        onValue(roomsRef, (snapshot) => {
+            const data = snapshot.val();
+            const container = document.getElementById('roomsContainer');
+            container.innerHTML = '';
+
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = '<div style="color: #94a3b8; font-size: 0.8rem;">Žádné otevřené místnosti. Vytvoř vlastní zadáním názvu výše!</div>';
+                return;
+            }
+
+            for (const [rId, rData] of Object.entries(data)) {
+                const row = document.createElement('div');
+                row.className = 'room-row';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'room-name';
+                nameSpan.textContent = `⚓ ${rId} (${rData.status || 'čekání'})`;
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'room-actions';
+
+                const joinBtn = document.createElement('button');
+                joinBtn.className = 'btn-join';
+                joinBtn.textContent = 'Připojit';
+                joinBtn.onclick = () => {
+                    document.getElementById('roomInput').value = rId;
+                    window.joinGame();
+                };
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete';
+                delBtn.textContent = 'Zavřít';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    openDeleteModal(rId);
+                };
+
+                actionsDiv.appendChild(joinBtn);
+                actionsDiv.appendChild(delBtn);
+
+                row.appendChild(nameSpan);
+                row.appendChild(actionsDiv);
+                container.appendChild(row);
+            }
+        });
+    });
+
     window.addEventListener('mousemove', (e) => {
         const floating = document.getElementById('floatingShip');
         if (selectedShip) {
@@ -269,7 +508,6 @@ input {
         }
     });
 
-    // Otáčení mezerníkem
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && selectedShip) {
             e.preventDefault();
@@ -284,6 +522,9 @@ input {
             return;
         }
         roomId = input;
+        
+        // Zobrazení názvu místnosti v herním rozhraní
+        document.getElementById('currentRoomBadge').textContent = `Místnost: ${roomId}`;
         
         const roomRef = ref(db, 'rooms/' + roomId);
         get(roomRef).then((snapshot) => {
@@ -401,7 +642,6 @@ input {
 
             const currentIndex = i;
             btn.onclick = () => {
-                // Pokud klikneme na již umístěnou loď, vrátíme ji do docku
                 if (placedShipsMap[currentIndex]) {
                     const targetShipId = placedShipsMap[currentIndex];
                     let shipSize = parseInt(targetShipId.split('_')[0]);
@@ -420,7 +660,6 @@ input {
                     return;
                 }
 
-                // Pokud máme vybranou plovoucí loď, zkusíme ji položit
                 if (selectedShip) {
                     placeSelectedShip(currentIndex);
                 }
