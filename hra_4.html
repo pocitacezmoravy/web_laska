@@ -118,9 +118,9 @@ input {
     <div id="gameSection" class="hidden">
         <div class="status-box" id="statusMessage">Načítání stavu hry...</div>
         
-        <!-- Umisťování lodí (fáze 1) - Klasicky 5 lodí -->
+        <!-- Umisťování lodí (fáze 1) - Kompletní flotila 20 dílků -->
         <div id="placementPhase">
-            <p style="font-size: 0.8rem; margin: 5px 0;">Rozmístí svých <strong>5 lodí (🚢)</strong>:</p>
+            <p style="font-size: 0.8rem; margin: 5px 0;">Rozmístí flotilu: <strong>1x(4), 2x(3), 3x(2), 4x(1)</strong><br>Zvoleno dílků: <span id="shipCount">0</span> / 20</p>
             <div class="grid" id="placementGrid"></div>
             <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění ⚓</button>
         </div>
@@ -159,7 +159,7 @@ input {
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const BOARD_SIZE = 100; // 10x10 políček
+    const BOARD_SIZE = 100;
     let roomId = "";
     let playerRole = ""; 
     let myShips = Array(BOARD_SIZE).fill(false);
@@ -210,16 +210,18 @@ input {
     }
 
     function toggleShip(index, btn) {
-        if (myShips.filter(Boolean).length >= 5 && !myShips[index]) {
-            alert("Můžeš rozmístit maximálně 5 lodí!");
+        const currentCount = myShips.filter(Boolean).length;
+        if (currentCount >= 20 && !myShips[index]) {
+            alert("Můžeš rozmístit maximálně 20 dílků lodí!");
             return;
         }
         myShips[index] = !myShips[index];
         btn.textContent = myShips[index] ? '🚢' : '·';
         btn.style.background = myShips[index] ? '#fce7f3' : 'white';
 
-        const count = myShips.filter(Boolean).length;
-        document.getElementById('readyBtn').disabled = (count !== 5);
+        const newCount = myShips.filter(Boolean).length;
+        document.getElementById('shipCount').textContent = newCount;
+        document.getElementById('readyBtn').disabled = (newCount !== 20);
     }
 
     window.setReady = function() {
@@ -300,15 +302,19 @@ input {
         if (gameState.turn !== playerRole) return;
         if (shotsData[index] !== null) return; 
 
+        const updatedShots = [...shotsData];
         const isHit = oppShips[index] === true;
-        shotsData[index] = isHit ? 'hit' : 'miss';
+        updatedShots[index] = isHit ? 'hit' : 'miss';
 
         const nextTurn = playerRole === 'p1' ? 'p2' : 'p1';
 
         const updates = {};
-        updates[playerRole + 'Shots'] = shotsData;
+        updates[playerRole + 'Shots'] = updatedShots;
         updates['turn'] = nextTurn;
-        update(ref(db, 'rooms/' + roomId), updates);
+        
+        update(ref(db, 'rooms/' + roomId), updates).catch((error) => {
+            console.error("Chyba při odesílání tahu:", error);
+        });
     }
 
     function checkWinCondition(oppShips, myShotsArr, myShipsArr, oppShotsArr) {
