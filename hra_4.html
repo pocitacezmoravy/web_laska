@@ -57,6 +57,11 @@ h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
     background: #e2e8f0;
     color: #4a5568;
     box-shadow: none;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    width: auto;
+    display: inline-block;
+    margin-bottom: 8px;
 }
 .board-container {
     margin-top: 10px;
@@ -67,28 +72,35 @@ h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
     margin-bottom: 4px;
     color: #db2777;
 }
+
+/* PŘESNÉ ROZMĚRY MŘÍŽKY (32px buňky + 2px mezera) */
 .grid {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(10, 32px);
+    grid-template-rows: repeat(10, 32px);
     gap: 2px;
-    background: #f472b6;
-    padding: 3px;
-    border-radius: 6px;
+    background: #0284c7;
+    padding: 4px;
+    border-radius: 8px;
     margin-bottom: 10px;
+    justify-content: center;
 }
 .cell {
-    aspect-ratio: 1;
-    background: white;
+    width: 32px;
+    height: 32px;
+    background: #f0f9ff;
     border: none;
-    border-radius: 2px;
-    font-size: 0.7rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     padding: 0;
+    color: #0369a1;
 }
-.cell:hover { background: #fce7f3; }
+.cell:hover { background: #e0f2fe; }
+
 input {
     width: 100%;
     padding: 10px;
@@ -99,6 +111,58 @@ input {
     text-align: center;
     font-size: 1rem;
 }
+.fleet-dock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px dashed #cbd5e1;
+    min-height: 75px;
+    align-items: center;
+}
+
+/* DESIGN LODÍ V DOCKU */
+.ship-item {
+    display: flex;
+    gap: 2px;
+    background: #0284c7;
+    border: 2px solid #0369a1;
+    border-radius: 6px;
+    padding: 2px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 3px 6px rgba(2, 132, 199, 0.2);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.ship-item:hover {
+    transform: scale(1.03);
+}
+.ship-item.selected {
+    border: 2px solid #ea580c;
+    box-shadow: 0 0 10px rgba(234, 88, 12, 0.6);
+    transform: scale(1.05);
+}
+
+.ship-segment {
+    width: 28px;
+    height: 28px;
+    background: #ffffff;
+    border: 1px solid #bae6fd;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+.ship-segment.bow { border-top-left-radius: 8px; border-bottom-left-radius: 8px; background: #e0f2fe; }
+.ship-segment.stern { border-top-right-radius: 8px; border-bottom-right-radius: 8px; background: #e0f2fe; }
+.ship-segment.body { background: #f0f9ff; }
+
 .hidden { display: none !important; }
 </style>
 </head>
@@ -118,14 +182,16 @@ input {
     <div id="gameSection" class="hidden">
         <div class="status-box" id="statusMessage">Načítání stavu hry...</div>
         
-        <!-- Umisťování lodí (fáze 1) - Kompletní flotila 20 dílků -->
+        <!-- Umisťování lodí -->
         <div id="placementPhase">
-            <p style="font-size: 0.8rem; margin: 5px 0;">Rozmístí flotilu: <strong>1x(4), 2x(3), 3x(2), 4x(1)</strong><br>Zvoleno dílků: <span id="shipCount">0</span> / 20</p>
+            <p id="instructionText" style="font-size: 0.8rem; margin: 4px 0; font-weight: 600; color: #0284c7;">1. Klikni na loď v docku, 2. Klikni na políčko v mřížce</p>
+            <button class="btn-secondary" id="rotateBtn" onclick="toggleOrientation()">Směr: Vodorovně ➡️</button>
+            <div class="fleet-dock" id="fleetDock"></div>
             <div class="grid" id="placementGrid"></div>
             <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění ⚓</button>
         </div>
 
-        <!-- Bojová fáze (fáze 2) -->
+        <!-- Bojová fáze -->
         <div id="battlePhase" class="hidden">
             <div class="board-container">
                 <div class="board-title">Nepřátelské moře (Střílej sem):</div>
@@ -137,11 +203,11 @@ input {
             </div>
         </div>
 
-        <button class="btn btn-secondary" onclick="location.reload()">Opustit hru</button>
+        <button class="btn btn-secondary" onclick="location.reload()" style="width:100%; margin-top:10px;">Opustit hru</button>
     </div>
 </div>
 
-<!-- Firebase SDK (v9 modular CDN) -->
+<!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -162,8 +228,23 @@ input {
     const BOARD_SIZE = 100;
     let roomId = "";
     let playerRole = ""; 
-    let myShips = Array(BOARD_SIZE).fill(false);
     let gameState = {};
+
+    let availableShips = [
+        { id: '4_1', size: 4 },
+        { id: '3_1', size: 3 },
+        { id: '3_2', size: 3 },
+        { id: '2_1', size: 2 },
+        { id: '2_2', size: 2 },
+        { id: '2_3', size: 2 },
+        { id: '1_1', size: 1 },
+        { id: '1_2', size: 1 },
+        { id: '1_3', size: 1 },
+        { id: '1_4', size: 1 }
+    ];
+    let orientation = 'H'; // 'H' = vodorovně, 'V' = svisle
+    let placedShipsMap = {}; // index -> shipId
+    let selectedShip = null; // Právě vybraná loď k umístění
 
     window.joinGame = function() {
         const input = document.getElementById('roomInput').value.trim();
@@ -192,41 +273,166 @@ input {
 
             document.getElementById('setupSection').classList.add('hidden');
             document.getElementById('gameSection').classList.remove('hidden');
-            initPlacementBoard();
+            initPlacementUI();
             listenToGame();
         });
     }
 
-    function initPlacementBoard() {
+    function initPlacementUI() {
+        renderDock();
+        renderPlacementGrid();
+    }
+
+    function renderDock() {
+        const dock = document.getElementById('fleetDock');
+        dock.innerHTML = '';
+        if (availableShips.length === 0) {
+            dock.innerHTML = '<span style="font-size:0.85rem; color:#0284c7; font-weight:700;">Všechny lodě jsou na ploše! 🎉</span>';
+            selectedShip = null;
+            return;
+        }
+        availableShips.forEach(ship => {
+            const div = document.createElement('div');
+            div.className = 'ship-item';
+            if (selectedShip && selectedShip.id === ship.id) {
+                div.classList.add('selected');
+            }
+
+            div.onclick = () => {
+                selectedShip = ship;
+                renderDock();
+                document.getElementById('instructionText').textContent = `Vybrána loď (${ship.size} dílky). Klikni na hrací plochu!`;
+            };
+
+            for (let i = 0; i < ship.size; i++) {
+                const seg = document.createElement('div');
+                seg.className = 'ship-segment';
+                
+                if (ship.size === 1) {
+                    seg.classList.add('bow');
+                    seg.textContent = '⛵';
+                } else if (i === 0) {
+                    seg.classList.add('bow');
+                    seg.textContent = '⚓';
+                } else if (i === ship.size - 1) {
+                    seg.classList.add('stern');
+                    seg.textContent = '🚢';
+                } else {
+                    seg.classList.add('body');
+                    seg.textContent = '⚙️';
+                }
+                div.appendChild(seg);
+            }
+            dock.appendChild(div);
+        });
+    }
+
+    window.toggleOrientation = function() {
+        orientation = orientation === 'H' ? 'V' : 'H';
+        document.getElementById('rotateBtn').textContent = orientation === 'H' ? 'Směr: Vodorovně ➡️' : 'Směr: Svisle ⬇️';
+    }
+
+    function renderPlacementGrid() {
         const grid = document.getElementById('placementGrid');
         grid.innerHTML = '';
         for (let i = 0; i < BOARD_SIZE; i++) {
             const btn = document.createElement('button');
             btn.classList.add('cell');
-            btn.textContent = '·';
-            btn.onclick = () => toggleShip(i, btn);
+            
+            if (placedShipsMap[i]) {
+                btn.textContent = '🚢';
+                btn.style.background = '#e0f2fe';
+            } else {
+                btn.textContent = '·';
+                btn.style.background = '#f0f9ff';
+            }
+
+            const currentIndex = i;
+            btn.onclick = () => {
+                // Pokud na políčku už loď je, kliknutím ji vrátíme do docku
+                if (placedShipsMap[currentIndex]) {
+                    const targetShipId = placedShipsMap[currentIndex];
+                    let shipSize = parseInt(targetShipId.split('_')[0]);
+
+                    for (let k in placedShipsMap) {
+                        if (placedShipsMap[k] === targetShipId) {
+                            delete placedShipsMap[k];
+                        }
+                    }
+
+                    availableShips.push({
+                        id: targetShipId,
+                        size: shipSize
+                    });
+
+                    renderPlacementGrid();
+                    renderDock();
+                    document.getElementById('readyBtn').disabled = true;
+                    document.getElementById('instructionText').textContent = "Loď vrácena do docku. Vyber jinou.";
+                    return;
+                }
+
+                // Pokud máme vybranou loď, umístíme ji
+                if (selectedShip) {
+                    placeSelectedShip(currentIndex);
+                }
+            };
+
             grid.appendChild(btn);
         }
     }
 
-    function toggleShip(index, btn) {
-        const currentCount = myShips.filter(Boolean).length;
-        if (currentCount >= 20 && !myShips[index]) {
-            alert("Můžeš rozmístit maximálně 20 dílků lodí!");
+    function placeSelectedShip(index) {
+        const row = Math.floor(index / 10);
+        const col = index % 10;
+        const size = selectedShip.size;
+
+        if (orientation === 'H' && col + size > 10) {
+            alert("Loď se v tomto směru vejde na řádek!");
             return;
         }
-        myShips[index] = !myShips[index];
-        btn.textContent = myShips[index] ? '🚢' : '·';
-        btn.style.background = myShips[index] ? '#fce7f3' : 'white';
+        if (orientation === 'V' && row + size > 10) {
+            alert("Loď se v tomto směru vejde do sloupce!");
+            return;
+        }
 
-        const newCount = myShips.filter(Boolean).length;
-        document.getElementById('shipCount').textContent = newCount;
-        document.getElementById('readyBtn').disabled = (newCount !== 20);
+        let targetIndices = [];
+        for (let i = 0; i < size; i++) {
+            let targetIndex = orientation === 'H' ? index + i : index + (i * 10);
+            if (placedShipsMap[targetIndex]) {
+                alert("Tady už nějaká loď překáží!");
+                return;
+            }
+            targetIndices.push(targetIndex);
+        }
+
+        targetIndices.forEach(idx => {
+            placedShipsMap[idx] = selectedShip.id;
+        });
+
+        // Odebereme loď z dostupných
+        availableShips = availableShips.filter(s => s.id !== selectedShip.id);
+        selectedShip = null;
+
+        renderPlacementGrid();
+        renderDock();
+
+        document.getElementById('instructionText').textContent = "1. Klikni na loď v docku, 2. Klikni na políčko v mřížce";
+
+        if (availableShips.length === 0) {
+            document.getElementById('readyBtn').disabled = false;
+            document.getElementById('instructionText').textContent = "Všechny lodě jsou rozestavěné! Můžeš potvrdit hru. 🎉";
+        }
     }
 
     window.setReady = function() {
+        const myShipsArray = Array(BOARD_SIZE).fill(false);
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            if (placedShipsMap[i]) myShipsArray[i] = true;
+        }
+
         const updates = {};
-        updates[playerRole + 'Ships'] = myShips;
+        updates[playerRole + 'Ships'] = myShipsArray;
         updates[playerRole + 'Ready'] = true;
         update(ref(db, 'rooms/' + roomId), updates);
         
