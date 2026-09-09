@@ -203,7 +203,6 @@ input {
 }
 .ship-item:hover { transform: scale(1.03); }
 
-/* Základní segment lodě – ručně kreslený styl perem */
 .ship-segment {
     width: 26px;
     height: 26px;
@@ -216,7 +215,6 @@ input {
     box-sizing: border-box;
 }
 
-/* Vnitřní křížkovo-kroužkový vzor podle předlohy */
 .ship-segment::before {
     content: "✕";
     position: absolute;
@@ -235,15 +233,12 @@ input {
     z-index: 1;
 }
 
-/* Tvarování okrajů podle délky a orientace lodě (H = vodorovně, V = svisle) */
-/* Jednolodě (velikost 1) */
 .ship-item[data-size="1"] .ship-segment,
 .cell.ship-1[data-orient="H"] .ship-segment,
 .cell.ship-1[data-orient="V"] .ship-segment {
     border-radius: 50px;
 }
 
-/* Vodorovné lodě (H) */
 .ship-item[data-orient="H"] .ship-segment:first-child,
 .cell.ship-start-h .ship-segment {
     border-top-left-radius: 50px;
@@ -255,7 +250,6 @@ input {
     border-bottom-right-radius: 50px;
 }
 
-/* Svislé lodě (V) */
 .ship-item[data-orient="V"] .ship-segment:first-child,
 .cell.ship-start-v .ship-segment {
     border-top-left-radius: 50px;
@@ -639,7 +633,7 @@ input {
                     p1Ready: false,
                     p2Ready: false
                 });
-            } else if (!val.p2Ready && val.status === 'placement' && !val.p2Ships) {
+            } else if (!val.p2Ready && (val.status === 'placement' || !val.p2Ships)) {
                 playerRole = "p2";
             } else {
                 playerRole = "p2";
@@ -874,8 +868,11 @@ input {
             if (!data) return;
             gameState = data;
 
-            if (data.p1Ready && data.p2Ready && data.status === 'placement') {
-                if (playerRole === 'p1') update(roomRef, { status: 'battle' });
+            // OPRAVA: Kontrolujeme, zda jsou oba hráči připraveni, bez ohledu na to, v jakém stavu (placement/battle) místnost zrovna je, abychom zajistili spolehlivý přechod do bitvy.
+            if (data.p1Ready && data.p2Ready && data.status !== 'battle') {
+                if (playerRole === 'p1') {
+                    update(roomRef, { status: 'battle' });
+                }
             }
 
             if (data.status === 'battle') {
@@ -966,7 +963,7 @@ input {
                 div.classList.add(info.type);
                 div.setAttribute('data-orient', info.orient);
                 const seg = document.createElement('div');
-                seg.className = 'ship-segment';
+                    seg.className = 'ship-segment';
                 div.appendChild(seg);
             }
             if (myOpponentShots[i] === 'hit') {
@@ -1052,7 +1049,7 @@ input {
         if (oppShipCount > 0 && myHits === oppShipCount) {
             document.getElementById('statusMessage').textContent = "Gratuluji! Zničil jsi všechny nepřátelské lodě a vyhrál! 🏆";
         } else if (myShipCount > 0 && oppHits === myShipCount) {
-            document.getElementById('statusMessage').textContent = "Protivník potopil všechny tvé lodě, vyhrál on! 🙈";
+            document.getElementById('statusMessage' ).textContent = "Protivník potopil všechny tvé lodě, vyhrál on! 🙈";
         }
     }
 </script>
