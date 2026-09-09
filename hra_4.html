@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Zamilované Lodě ⛵💖</title>
+<title>Klasické Lodě ⛵</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; }
@@ -12,7 +12,7 @@ body {
     background: #fdf2f8;
     color: #4a5568;
     margin: 0;
-    padding: 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,22 +21,22 @@ body {
 }
 .container {
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(219, 39, 119, 0.1);
     width: 100%;
-    max-width: 450px;
+    max-width: 480px;
     text-align: center;
 }
-h2 { color: #db2777; margin-top: 0; }
+h2 { color: #db2777; margin-top: 0; font-size: 1.4rem; }
 .status-box {
     background: #fdf2f8;
     border: 2px dashed #f472b6;
-    padding: 10px;
+    padding: 8px;
     border-radius: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: #be185d;
 }
 .btn {
@@ -44,13 +44,13 @@ h2 { color: #db2777; margin-top: 0; }
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 12px 20px;
+    padding: 10px 15px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-family: inherit;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 8px;
     box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3);
 }
 .btn-secondary {
@@ -59,39 +59,39 @@ h2 { color: #db2777; margin-top: 0; }
     box-shadow: none;
 }
 .board-container {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 .board-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     color: #db2777;
 }
 .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 2px;
     background: #f472b6;
-    padding: 4px;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    padding: 3px;
+    border-radius: 6px;
+    margin-bottom: 10px;
 }
 .cell {
     aspect-ratio: 1;
     background: white;
     border: none;
-    border-radius: 4px;
-    font-size: 1.1rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s;
+    padding: 0;
 }
 .cell:hover { background: #fce7f3; }
 input {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #cbd5e1;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -105,11 +105,11 @@ input {
 <body>
 
 <div class="container">
-    <h2>Zamilované Lodě ⛵💖</h2>
+    <h2>Klasické Lodě ⛵</h2>
     
     <!-- SEKCE PRO PŘIPOJENÍ -->
     <div id="setupSection">
-        <div class="status-box">Zadejte název místnosti, kterou chcete sdílet s partnerkou (např. "laskyhra123")</div>
+        <div class="status-box">Zadejte název místnosti pro spárování (např. "lodniparte1")</div>
         <input type="text" id="roomInput" placeholder="Název místnosti...">
         <button class="btn" onclick="joinGame()">Vstoupit do hry</button>
     </div>
@@ -118,21 +118,21 @@ input {
     <div id="gameSection" class="hidden">
         <div class="status-box" id="statusMessage">Načítání stavu hry...</div>
         
-        <!-- Umisťování lodí (fáze 1) -->
+        <!-- Umisťování lodí (fáze 1) - Klasicky 5 lodí -->
         <div id="placementPhase">
-            <p style="font-size: 0.85rem;">Kliknutím na políčka umísti své <strong>3 lodě (💖)</strong>:</p>
+            <p style="font-size: 0.8rem; margin: 5px 0;">Rozmístí svých <strong>5 lodí (🚢)</strong>:</p>
             <div class="grid" id="placementGrid"></div>
-            <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění 💕</button>
+            <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění ⚓</button>
         </div>
 
         <!-- Bojová fáze (fáze 2) -->
         <div id="battlePhase" class="hidden">
             <div class="board-container">
-                <div class="board-title">Střílej na nepřátelská políčka:</div>
+                <div class="board-title">Nepřátelské moře (Střílej sem):</div>
                 <div class="grid" id="shootingGrid"></div>
             </div>
             <div class="board-container">
-                <div class="board-title">Tvá obrana:</div>
+                <div class="board-title">Tvoje flotila:</div>
                 <div class="grid" id="myDefenseGrid"></div>
             </div>
         </div>
@@ -146,11 +146,8 @@ input {
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ==========================================
-    // SEM VLOŽ SVŮJ FIREBASE CONFIG Z KONZOLE
-    // ==========================================
     const firebaseConfig = {
-        apiKey: "AIzaSyA-RCJcraf1WBLKs48u6521NZO1iGtSPxI",
+        apiKey: "AIzaSyA-RCJcraf1WBLKs48u6521NZ0I1iGtSPxI",
         authDomain: "laska-web.firebaseapp.com",
         databaseURL: "https://laska-web-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "laska-web",
@@ -162,12 +159,10 @@ input {
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const BOARD_SIZE = 5; // 5x5 políček pro rychlou a zábavnou mobilní hru
+    const BOARD_SIZE = 100; // 10x10 políček
     let roomId = "";
-    let playerRole = ""; // "p1" nebo "p2"
-    let myShips = Array(25).fill(false);
-    let myShots = Array(25).fill(null); // null, 'hit', 'miss'
-    let opponentShots = Array(25).fill(null);
+    let playerRole = ""; 
+    let myShips = Array(BOARD_SIZE).fill(false);
     let gameState = {};
 
     window.joinGame = function() {
@@ -182,7 +177,6 @@ input {
         get(roomRef).then((snapshot) => {
             const val = snapshot.val();
             if (!val) {
-                // První hráč zakládá místnost
                 playerRole = "p1";
                 set(roomRef, {
                     status: 'placement',
@@ -191,10 +185,8 @@ input {
                     p2Ready: false
                 });
             } else if (!val.p2Ready && val.status === 'placement' && !val.p2Ships) {
-                // Druhý hráč se připojuje
                 playerRole = "p2";
             } else {
-                // Pokud už jsou oba obsazeni, pustíme jako diváka/p2
                 playerRole = "p2";
             }
 
@@ -208,7 +200,7 @@ input {
     function initPlacementBoard() {
         const grid = document.getElementById('placementGrid');
         grid.innerHTML = '';
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < BOARD_SIZE; i++) {
             const btn = document.createElement('button');
             btn.classList.add('cell');
             btn.textContent = '·';
@@ -218,16 +210,16 @@ input {
     }
 
     function toggleShip(index, btn) {
-        if (myShips.filter(Boolean).length >= 3 && !myShips[index]) {
-            alert("Můžeš rozmístit maximálně 3 lodě!");
+        if (myShips.filter(Boolean).length >= 5 && !myShips[index]) {
+            alert("Můžeš rozmístit maximálně 5 lodí!");
             return;
         }
         myShips[index] = !myShips[index];
-        btn.textContent = myShips[index] ? '💖' : '·';
+        btn.textContent = myShips[index] ? '🚢' : '·';
         btn.style.background = myShips[index] ? '#fce7f3' : 'white';
 
         const count = myShips.filter(Boolean).length;
-        document.getElementById('readyBtn').disabled = (count !== 3);
+        document.getElementById('readyBtn').disabled = (count !== 5);
     }
 
     window.setReady = function() {
@@ -247,7 +239,6 @@ input {
             if (!data) return;
             gameState = data;
 
-            // Kontrola přechodu do bojové fáze
             if (data.p1Ready && data.p2Ready && data.status === 'placement') {
                 if (playerRole === 'p1') {
                     update(roomRef, { status: 'battle' });
@@ -261,21 +252,20 @@ input {
                 
                 const isMyTurn = data.turn === playerRole;
                 document.getElementById('statusMessage').textContent = isMyTurn ? 
-                    "Tvůj tah! Zautoč na nepřátelskou mřížku ✨" : 
+                    "Tvůj tah! Zvol políčko na nepřátelské mřížce 🎯" : 
                     "Na tahu je partnerka, vyčkej na její útok... ☕";
             }
         });
     }
 
     function renderBattleBoards() {
-        // Střelecká mřížka
         const shootGrid = document.getElementById('shootingGrid');
         shootGrid.innerHTML = '';
         const oppKey = playerRole === 'p1' ? 'p2' : 'p1';
         const oppShips = gameState[oppKey + 'Ships'] || [];
-        const shotsData = gameState[playerRole + 'Shots'] || Array(25).fill(null);
+        const shotsData = gameState[playerRole + 'Shots'] || Array(BOARD_SIZE).fill(null);
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < BOARD_SIZE; i++) {
             const btn = document.createElement('button');
             btn.classList.add('cell');
             let symbol = '·';
@@ -287,30 +277,28 @@ input {
             shootGrid.appendChild(btn);
         }
 
-        // Obranná mřížka (moje lodě + zásahy od soupeře)
         const defenseGrid = document.getElementById('myDefenseGrid');
         defenseGrid.innerHTML = '';
-        const myActiveShips = gameState[playerRole + 'Ships'] || Array(25).fill(false);
-        const myOpponentShots = gameState[oppKey + 'Shots'] || Array(25).fill(null);
+        const myActiveShips = gameState[playerRole + 'Ships'] || Array(BOARD_SIZE).fill(false);
+        const myOpponentShots = gameState[oppKey + 'Shots'] || Array(BOARD_SIZE).fill(null);
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < BOARD_SIZE; i++) {
             const div = document.createElement('div');
             div.classList.add('cell');
             let symbol = '·';
-            if (myActiveShips[i]) symbol = '💖';
+            if (myActiveShips[i]) symbol = '🚢';
             if (myOpponentShots[i] === 'hit') symbol = '💥';
             if (myOpponentShots[i] === 'miss') symbol = '❌';
             div.textContent = symbol;
             defenseGrid.appendChild(div);
         }
 
-        // Kontrola výhry
         checkWinCondition(oppShips, shotsData, myActiveShips, myOpponentShots);
     }
 
     function fireShot(index, oppShips, shotsData) {
         if (gameState.turn !== playerRole) return;
-        if (shotsData[index] !== null) return; // Už stříleno
+        if (shotsData[index] !== null) return; 
 
         const isHit = oppShips[index] === true;
         shotsData[index] = isHit ? 'hit' : 'miss';
@@ -331,9 +319,9 @@ input {
         const oppHits = oppShotsArr.filter(s => s === 'hit').length;
 
         if (oppShipCount > 0 && myHits === oppShipCount) {
-            document.getElementById('statusMessage').textContent = "Gratuluji! Zničil jsi všechny nepřátelské lodě a vyhrál! 🎉💖";
+            document.getElementById('statusMessage').textContent = "Gratuluji! Zničil jsi všechny nepřátelské lodě a vyhrál! 🎉";
         } else if (myShipCount > 0 && oppHits === myShipCount) {
-            document.getElementById('statusMessage').textContent = "Partnerka potopila všechny tvé lodě, vyhrála ona! 🙈💕";
+            document.getElementById('statusMessage').textContent = "Partnerka potopila všechny tvé lodě, vyhrála ona! 🙈";
         }
     }
 </script>
