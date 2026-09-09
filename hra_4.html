@@ -415,6 +415,25 @@ input {
     let placedShipsMap = {};
     let selectedShip = null;
 
+    // Pomocná funkce pro bezpečný převod dat z Firebase na čisté pole
+    function ensureArray(data, size = BOARD_SIZE, defaultValue = null) {
+        if (!data) return Array(size).fill(defaultValue);
+        if (Array.isArray(data)) {
+            // Pokud pole občas ve Firebase chybí na začátku, doplníme délku
+            let arr = [...data];
+            while(arr.length < size) arr.push(defaultValue);
+            return arr;
+        }
+        // Pokud Firebase vrátí objekt s číselnými klíči
+        let arr = Array(size).fill(defaultValue);
+        for (let i = 0; i < size; i++) {
+            if (data[i] !== undefined) {
+                arr[i] = data[i];
+            }
+        }
+        return arr;
+    }
+
     // Obsluha Enteru pro vstupní pole názvu místnosti i pro modální okno
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Enter' || e.key === 'Enter') {
@@ -523,7 +542,6 @@ input {
         }
         roomId = input;
         
-        // Zobrazení názvu místnosti v herním rozhraní
         document.getElementById('currentRoomBadge').textContent = `Místnost: ${roomId}`;
         
         const roomRef = ref(db, 'rooms/' + roomId);
@@ -747,7 +765,7 @@ input {
                 const isMyTurn = data.turn === playerRole;
                 document.getElementById('statusMessage').textContent = isMyTurn ? 
                     "Tvůj tah! Zvol políčko na nepřátelské mřížce 🎯" : 
-                    "Na tahu je partnerka, vyčkej na její útok... ☕";
+                    "Na tahu je druhá strana, vyčkej na její útok... ☕";
             }
         });
     }
@@ -756,8 +774,10 @@ input {
         const shootGrid = document.getElementById('shootingGrid');
         shootGrid.innerHTML = '';
         const oppKey = playerRole === 'p1' ? 'p2' : 'p1';
-        const oppShips = gameState[oppKey + 'Ships'] || [];
-        const shotsData = gameState[playerRole + 'Shots'] || Array(BOARD_SIZE).fill(null);
+        
+        // Použití robustní kontroly polí
+        const oppShips = ensureArray(gameState[oppKey + 'Ships'], BOARD_SIZE, false);
+        const shotsData = ensureArray(gameState[playerRole + 'Shots'], BOARD_SIZE, null);
 
         for (let i = 0; i < BOARD_SIZE; i++) {
             const btn = document.createElement('button');
@@ -767,14 +787,15 @@ input {
             if (shotsData[i] === 'miss') symbol = '❌';
             btn.textContent = symbol;
             
-            btn.onclick = () => fireShot(i, oppShips, shotsData);
+            const currentIndex = i;
+            btn.onclick = () => fireShot(currentIndex, oppShips, shotsData);
             shootGrid.appendChild(btn);
         }
 
         const defenseGrid = document.getElementById('myDefenseGrid');
         defenseGrid.innerHTML = '';
-        const myActiveShips = gameState[playerRole + 'Ships'] || Array(BOARD_SIZE).fill(false);
-        const myOpponentShots = gameState[oppKey + 'Shots'] || Array(BOARD_SIZE).fill(null);
+        const myActiveShips = ensureArray(gameState[playerRole + 'Ships'], BOARD_SIZE, false);
+        const myOpponentShots = ensureArray(gameState[oppKey + 'Shots'], BOARD_SIZE, null);
 
         for (let i = 0; i < BOARD_SIZE; i++) {
             const div = document.createElement('div');
@@ -819,7 +840,7 @@ input {
         if (oppShipCount > 0 && myHits === oppShipCount) {
             document.getElementById('statusMessage').textContent = "Gratuluji! Zničil jsi všechny nepřátelské lodě a vyhrál! 🎉";
         } else if (myShipCount > 0 && oppHits === myShipCount) {
-            document.getElementById('statusMessage').textContent = "Partnerka potopila všechny tvé lodě, vyhrála ona! 🙈";
+            document.getElementById('statusMessage').textContent = "Protivník potopil všechny tvé lodě, vyhrál on! 🙈";
         }
     }
 </script>
