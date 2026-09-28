@@ -3,3 +3,17 @@ překvapení nebo automat udělat tak aby to bylo na maličkosti masáž a takhl
 upravit pole na vyplňování údajů
 překvapení má jen jednu možnost na výhru
 upravit kalkulačku
+
+
+
+lodě:
+    upravit konec hry tak aby když jeden hráč má zničené všechny lodě tak je konec
+    upravit zobrazování zničrných částí lodě a pak celé
+    upravit aby se lodě nedotýkali a když ji celou zničíme tak aby se kolem nich dala voda (tečky)
+    ukazatel počtu lodí které jsou naživu
+    ať ty pole jsou vedle sebe
+    ten kdo vyhraje ať vyskočí bublina o tom že vyhrál a konfety
+
+
+hlavní menu
+    nejde posunout nevleze se na mobil udělat aby to šlo
