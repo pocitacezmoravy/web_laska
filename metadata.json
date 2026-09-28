@@ -1,0 +1,8 @@
+{
+  "name": "Vše nejlepší k výročí!",
+  "description": "Výroční web s hrami, překvapeními a plánovačem pro zamilované.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
