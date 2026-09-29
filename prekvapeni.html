@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Čeká tě překvapení! 🎁</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,14 +18,20 @@
 </script>
 
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; min-height: 100vh; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; min-height: 100vh; min-height: 100dvh; }
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background: radial-gradient(circle at 50% 30%, rgba(255, 107, 107, 0.15), transparent 60%), linear-gradient(135deg, #0d0414 0%, #1a0b2e 50%, #31145a 100%);
     background-attachment: fixed;
     display: flex; justify-content: center; align-items: center;
-    padding: 24px 16px; position: relative; color: #ffffff; overflow-x: hidden;
+    padding: 24px 16px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    position: relative; color: #ffffff; overflow-x: hidden;
+    touch-action: manipulation;
 }
 .floating-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
 .floating-item {
@@ -45,9 +51,11 @@ body {
 .floating-item:nth-child(5) { left: 90%; animation-delay: 2s; animation-duration: 10s; }
 
 .card {
-    background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); padding: 40px 28px; border-radius: 32px;
+    background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    padding: 40px 28px; border-radius: 32px;
     border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 0 50px rgba(236, 72, 153, 0.25);
     max-width: 440px; width: 100%; text-align: center; position: relative; z-index: 10;
+    margin: auto;
 }
 .card::before {
     content: "🎁"; position: absolute; top: -24px; left: 50%; transform: translateX(-50%); font-size: 40px;
@@ -74,17 +82,68 @@ canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor:
 }
 .planning-section label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #f7fafc; }
 .planning-section input {
-    width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.9); font-family: inherit; color: #333;
+    width: 100%; padding: 11px 14px; margin-bottom: 12px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.95); font-family: inherit; color: #333;
+    font-size: 16px; /* Prevents iOS auto-zoom */
 }
 button {
-    border: none; padding: 12px 20px; border-radius: 14px; cursor: pointer; font-weight: 700;
-    font-size: 0.9rem; font-family: inherit; transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; padding: 13px 20px; border-radius: 14px; cursor: pointer; font-weight: 700;
+    font-size: 0.95rem; font-family: inherit; transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 46px;
 }
 .btn-primary { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #ffffff; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
 .btn-back { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); }
 .alert-msg { background: #ffdede; color: #900; padding: 8px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; text-align: center; }
 .hidden { display: none; }
+
+@media (max-width: 480px) {
+    body {
+        padding: 16px 10px;
+        padding-top: max(32px, env(safe-area-inset-top));
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        background-attachment: scroll;
+    }
+    .card {
+        padding: 32px 16px 20px 16px;
+        border-radius: 22px;
+    }
+    .card::before {
+        top: -20px;
+        width: 50px;
+        height: 50px;
+        font-size: 32px;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+    .subtitle {
+        font-size: 0.88rem;
+        margin-bottom: 18px;
+    }
+    .scratch-card-container {
+        height: 200px;
+    }
+    .secret-content h2 {
+        font-size: 1.1rem;
+    }
+    .secret-content p {
+        font-size: 0.88rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        padding: 28px 12px 16px 12px;
+    }
+    h1 {
+        font-size: 1.35rem;
+    }
+    .scratch-card-container {
+        height: 180px;
+    }
+}
 </style>
 </head>
 <body>
@@ -233,10 +292,25 @@ document.getElementById("confirmPlanBtn").addEventListener("click", function() {
 canvas.addEventListener("mousedown", (e) => { isScratching = true; const p = getPos(e); scratch(p.x, p.y); });
 window.addEventListener("mousemove", (e) => { if (!isScratching) return; const p = getPos(e); scratch(p.x, p.y); });
 window.addEventListener("mouseup", () => isScratching = false);
-canvas.addEventListener("touchstart", (e) => { isScratching = true; const p = getPos(e); scratch(p.x, p.y); });
-canvas.addEventListener("touchmove", (e) => { if (!isScratching) return; const p = getPos(e); scratch(p.x, p.y); });
-canvas.addEventListener("touchend", () => isScratching = false);
+
+canvas.addEventListener("touchstart", (e) => { 
+    isScratching = true; 
+    const p = getPos(e); 
+    scratch(p.x, p.y); 
+}, { passive: true });
+
+canvas.addEventListener("touchmove", (e) => { 
+    if (!isScratching) return; 
+    if (e.cancelable) e.preventDefault(); 
+    const p = getPos(e); 
+    scratch(p.x, p.y); 
+}, { passive: false });
+
+window.addEventListener("touchend", () => isScratching = false);
 window.onload = initCanvas;
+window.addEventListener("resize", () => {
+    if (!isRevealed) initCanvas();
+});
 </script>
 </body>
 </html>

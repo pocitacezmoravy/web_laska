@@ -2,106 +2,275 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Lodě na čtverečkovaném papíru ⛵</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
 body {
-    background-color: #f0f4f8;
-    background-image: 
-        linear-gradient(to right, #cbd5e1 1px, transparent 1px),
-        linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
-    background-size: 24px 24px;
+    background: 
+        radial-gradient(ellipse at 50% 15%, rgba(56, 189, 248, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 85% 80%, rgba(30, 64, 175, 0.35) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 44, 89, 0.76) 50%, rgba(12, 74, 96, 0.82) 100%),
+        url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     font-family: 'Kalam', cursive, sans-serif;
     color: #1e3a8a;
     margin: 0;
-    padding: 10px;
+    padding: 18px 12px;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh;
     touch-action: manipulation;
     user-select: none;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px;
-    border-radius: 4px;
-    border: 2px solid #1e3a8a;
-    box-shadow: 4px 4px 0px rgba(30, 58, 138, 0.2);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 24px 20px;
+    border-radius: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 20px 50px rgba(10, 25, 47, 0.4), 0 0 0 1px rgba(30, 58, 138, 0.15);
     width: 100%;
-    max-width: 480px;
+    max-width: 530px;
     text-align: center;
     position: relative;
+    z-index: 10;
+    margin: auto;
+    transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-h2 { color: #1e3a8a; margin-top: 0; font-size: 2.2rem; font-family: 'Caveat', cursive; letter-spacing: 1px; }
+.container.in-battle {
+    max-width: 920px;
+}
+h2 { color: #1e3a8a; margin-top: 0; font-size: 2.3rem; font-family: 'Caveat', cursive; letter-spacing: 1px; }
 .room-badge {
     background: #dbeafe;
     color: #1e3a8a;
     font-size: 1rem;
     font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 4px;
+    padding: 3px 12px;
+    border-radius: 20px;
     display: inline-block;
-    margin-bottom: 8px;
-    border: 1px dashed #1e3a8a;
+    margin-bottom: 10px;
+    border: 1.5px solid #93c5fd;
+    box-shadow: 0 2px 5px rgba(30, 58, 138, 0.08);
 }
 .status-box {
     background: #eff6ff;
-    border: 1px dashed #3b82f6;
-    padding: 6px;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border: 2px solid #3b82f6;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
     font-size: 1.05rem;
+    font-weight: 700;
     color: #1e3a8a;
+    transition: all 0.3s ease;
 }
+.status-box.my-turn {
+    background: #ecfdf5 !important;
+    border-color: #10b981 !important;
+    color: #065f46 !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.3) !important;
+    animation: turnPulse 2s infinite ease-in-out;
+}
+.status-box.opp-turn {
+    background: #fffbeb !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+}
+@keyframes turnPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.placement-toolbar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 8px 0 14px 0;
+    flex-wrap: wrap;
+}
+.btn-tool {
+    background: #ffffff;
+    color: #1e3a8a;
+    border: 1.5px solid #1e3a8a;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Kalam', cursive;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.12);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-tool:hover {
+    background: #eff6ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+}
+.btn-tool:active {
+    transform: translateY(0);
+}
+.btn-tool-action {
+    background: #e0f2fe;
+    border-color: #2563eb;
+    color: #1d4ed8;
+}
+.btn-tool-danger {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #b91c1c;
+}
+
 .btn {
-    background: #1e3a8a;
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
     color: white;
-    border: 2px solid #1e3a8a;
-    border-radius: 4px;
-    padding: 8px 15px;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-family: 'Kalam', cursive;
     width: 100%;
-    margin-top: 8px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    margin-top: 10px;
+    box-shadow: 0 4px 14px rgba(30, 58, 138, 0.3);
+    transition: all 0.2s ease;
 }
-.btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px rgba(0,0,0,0.2); }
-.btn-secondary {
-    background: #e2e8f0;
-    color: #1e3a8a;
-    border: 1px solid #94a3b8;
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+}
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
     box-shadow: none;
-    padding: 4px 8px;
-    font-size: 0.95rem;
+}
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+.btn-secondary {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    box-shadow: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 1rem;
     width: auto;
-    display: inline-block;
-    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.btn-secondary:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+}
+
+.battle-boards-row {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 .board-container {
-    margin-top: 10px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .board-title {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    margin-bottom: 2px;
+    margin-bottom: 8px;
     color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fleet-status-bar {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.fleet-status-card {
+    background: white;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 8px 14px;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.fleet-status-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 4px;
+}
+.fleet-chips {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.fleet-chip {
+    font-size: 0.8rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e3a8a;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+.fleet-chip.sunk {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+    text-decoration: line-through;
+    opacity: 0.55;
 }
 
 .grid-wrapper {
     display: inline-block;
     border: 2px solid #1e3a8a;
     background: white;
-    padding: 2px;
-    margin-bottom: 10px;
-    box-shadow: 3px 3px 0px rgba(30, 58, 138, 0.15);
+    padding: 3px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.12);
 }
 .grid-row-top {
     display: flex;
@@ -142,6 +311,8 @@ h2 { color: #1e3a8a; margin-top: 0; font-size: 2.2rem; font-family: 'Caveat', cu
     gap: 1px;
     background: #1e3a8a;
     padding: 1px;
+    border-radius: 4px;
+    overflow: hidden;
 }
 .cell {
     width: 26px;
@@ -157,38 +328,92 @@ h2 { color: #1e3a8a; margin-top: 0; font-size: 2.2rem; font-family: 'Caveat', cu
     padding: 0;
     color: #1e3a8a;
     position: relative;
+    transition: background 0.12s;
 }
 .cell:hover { background: #eff6ff; }
 
-.cell img.ship-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+/* Hit & Miss Styling */
+.cell.cell-miss {
+    background: #f8fafc !important;
+}
+.cell.cell-miss::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: #3b82f6;
+    border: 1.5px solid #1e3a8a;
+    border-radius: 50%;
+    opacity: 0.85;
+}
+.cell.cell-hit {
+    background: #fee2e2 !important;
+    position: relative;
+}
+.cell.cell-hit::after {
+    content: "💥";
+    font-size: 15px;
+    animation: popExplosion 0.3s ease-out;
+    filter: drop-shadow(0 0 3px #ef4444);
+}
+.cell.cell-burning {
+    position: relative;
+}
+.cell.cell-burning::after {
+    content: "🔥";
+    font-size: 16px;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 8;
+    animation: flamePulse 1.2s infinite ease-in-out;
+}
+@keyframes popExplosion {
+    0% { transform: scale(0.2); opacity: 0; }
+    70% { transform: scale(1.3); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes flamePulse {
+    0%, 100% { transform: scale(0.95); opacity: 0.85; }
+    50% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 5px #f97316); }
 }
 
 input {
     width: 100%;
-    padding: 8px;
+    padding: 10px 14px;
     border: 2px solid #1e3a8a;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    margin-bottom: 12px;
     font-family: 'Kalam', cursive;
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     background: #fff;
     color: #1e3a8a;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+}
+input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+.fleet-dock-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 6px;
 }
 .fleet-dock {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
-    margin-bottom: 10px;
-    background: #f8fafc;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px dashed #1e3a8a;
+    margin-bottom: 12px;
+    background: #f0f9ff;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1.5px dashed #3b82f6;
     min-height: 65px;
     align-items: center;
 }
@@ -196,69 +421,105 @@ input {
 .ship-item {
     display: flex;
     gap: 0px;
-    background: transparent;
-    padding: 2px;
+    background: rgba(224, 242, 254, 0.6);
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 2px 3px;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: all 0.2s ease;
+    align-items: center;
 }
-.ship-item:hover { transform: scale(1.03); }
+.ship-item:hover {
+    transform: translateY(-2px) scale(1.04);
+    background: rgba(191, 219, 254, 0.9);
+    box-shadow: 0 4px 10px rgba(30, 58, 138, 0.18);
+    border-color: #3b82f6;
+}
 
 .ship-segment {
     width: 26px;
     height: 26px;
-    background: #f8fafc;
-    border: 1.5px solid #1e3a8a;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     box-sizing: border-box;
+    background-size: 26px 26px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-.ship-segment::before {
-    content: "✕";
-    position: absolute;
-    color: #1e3a8a;
-    font-size: 13px;
-    font-weight: bold;
-    z-index: 2;
-}
-.ship-segment::after {
-    content: "";
-    position: absolute;
-    width: 11px;
-    height: 11px;
-    border: 1.5px solid #1e3a8a;
-    border-radius: 50%;
-    z-index: 1;
+/* Water under ship on boards */
+.cell.ship-1,
+.cell.ship-start-h,
+.cell.ship-end-h,
+.cell.ship-mid,
+.cell.ship-start-v,
+.cell.ship-end-v {
+    background-color: #e0f2fe !important;
 }
 
+/* === REALISTIC BATTLESHIP SVG GRAPHICS === */
+
+/* 1. Single Patrol Boat (1 cell) */
+.cell.ship-1 .ship-segment,
 .ship-item[data-size="1"] .ship-segment,
-.cell.ship-1[data-orient="H"] .ship-segment,
-.cell.ship-1[data-orient="V"] .ship-segment {
-    border-radius: 50px;
+#floatingShip[data-size="1"] .ship-segment {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Cpath d='M4,7 L13,5 C18,5 22,8.5 24,13 C22,17.5 18,21 13,21 L4,19 C2.5,16 2.5,10 4,7 Z' fill='%23334155' stroke='%230f172a' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M5.5,8.5 L12,7 C16,7 19,9.5 21,13 C19,16.5 16,19 12,19 L5.5,17.5 C4.5,15 4.5,11 5.5,8.5 Z' fill='%23475569'/%3E%3Cpath d='M8,9.5 L14,9.5 C15.5,10.8 15.5,15.2 14,16.5 L8,16.5 Z' fill='%231e293b' stroke='%230f172a' stroke-width='0.9'/%3E%3Cpath d='M12,11 C13,11.8 13,14.2 12,15' stroke='%2338bdf8' stroke-width='1.4' stroke-linecap='round' fill='none'/%3E%3Cline x1='16.5' y1='13' x2='22.5' y2='13' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16.5' cy='13' r='1.8' fill='%2364748b'/%3E%3Cline x1='6.5' y1='9.5' x2='6.5' y2='16.5' stroke='%230f172a' stroke-width='0.9'/%3E%3Cpath d='M6.5,9.5 L3.5,11 L6.5,12.5 Z' fill='%23ef4444'/%3E%3C/svg%3E");
 }
 
+/* 2. Horizontal Ship - Stern (Back, Left end) */
+.cell.ship-start-h .ship-segment,
 .ship-item[data-orient="H"] .ship-segment:first-child,
-.cell.ship-start-h .ship-segment {
-    border-top-left-radius: 50px;
-    border-bottom-left-radius: 50px;
-}
-.ship-item[data-orient="H"] .ship-segment:last-child,
-.cell.ship-end-h .ship-segment {
-    border-top-right-radius: 50px;
-    border-bottom-right-radius: 50px;
+#floatingShip[data-orient="H"] .ship-segment:first-child {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Cpath d='M26,4.5 L7,4.5 C4,4.5 2,7 2,10 L2,16 C2,19 4,21.5 7,21.5 L26,21.5 Z' fill='%23334155'/%3E%3Cpath d='M26,7 L8,7 C5.5,7 4,8.5 4,11 L4,15 C4,17.5 5.5,19 8,19 L26,19 Z' fill='%23475569'/%3E%3Cpath d='M26,4.5 L7,4.5 C4,4.5 2,7 2,10 L2,16 C2,19 4,21.5 7,21.5 L26,21.5' stroke='%230f172a' stroke-width='1.5' fill='none' stroke-linejoin='round'/%3E%3Cline x1='6' y1='8' x2='6' y2='18' stroke='%230f172a' stroke-width='1'/%3E%3Cpath d='M6,8 L10.5,10.5 L6,13 Z' fill='%23ef4444'/%3E%3Ccircle cx='17' cy='13' r='3.2' fill='%2364748b' stroke='%230f172a' stroke-width='0.9'/%3E%3Cline x1='15' y1='13' x2='9' y2='13' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M0.5,9.5 Q1.8,13 0.5,16.5' stroke='%2393c5fd' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
-.ship-item[data-orient="V"] .ship-segment:first-child,
-.cell.ship-start-v .ship-segment {
-    border-top-left-radius: 50px;
-    border-top-right-radius: 50px;
+/* 3. Horizontal Ship - Bow (Front, Right end, pointing ➡️) */
+.cell.ship-end-h .ship-segment,
+.ship-item[data-orient="H"] .ship-segment:last-child,
+#floatingShip[data-orient="H"] .ship-segment:last-child {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Cpath d='M0,4.5 L10,4.5 C16,4.5 21,8 24,13 C21,18 16,21.5 10,21.5 L0,21.5 Z' fill='%23334155'/%3E%3Cpath d='M0,7 L9,7 C14,7 18,9.5 20,13 C18,16.5 14,19 9,19 L0,19 Z' fill='%23475569'/%3E%3Cpath d='M0,4.5 L10,4.5 C16,4.5 21,8 24,13 C21,18 16,21.5 10,21.5 L0,21.5' stroke='%230f172a' stroke-width='1.5' fill='none' stroke-linejoin='round'/%3E%3Ccircle cx='8' cy='13' r='4' fill='%2364748b' stroke='%230f172a' stroke-width='1'/%3E%3Cline x1='8' y1='11.2' x2='18' y2='11.2' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='8' y1='14.8' x2='18' y2='14.8' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='19.5' y1='13' x2='23' y2='13' stroke='%2394a3b8' stroke-width='1'/%3E%3C/svg%3E");
 }
-.ship-item[data-orient="V"] .ship-segment:last-child,
-.cell.ship-end-v .ship-segment {
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
+
+/* 4. Horizontal Ship - Middle Section 1 (Bridge & Radar) */
+.cell.ship-mid[data-orient="H"] .ship-segment,
+.cell.ship-mid-1-h .ship-segment,
+.ship-item[data-orient="H"] .ship-segment:not(:first-child):not(:last-child),
+#floatingShip[data-orient="H"] .ship-segment:not(:first-child):not(:last-child) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Crect x='0' y='4.5' width='26' height='17' fill='%23334155'/%3E%3Crect x='0' y='7' width='26' height='12' fill='%23475569'/%3E%3Cline x1='0' y1='4.5' x2='26' y2='4.5' stroke='%230f172a' stroke-width='1.5'/%3E%3Cline x1='0' y1='21.5' x2='26' y2='21.5' stroke='%230f172a' stroke-width='1.5'/%3E%3Crect x='5' y='8' width='16' height='10' rx='2' fill='%231e293b' stroke='%230f172a' stroke-width='1'/%3E%3Crect x='15' y='9.5' width='4.5' height='7' rx='1' fill='%2338bdf8'/%3E%3Cline x1='15' y1='13' x2='19.5' y2='13' stroke='%230f172a' stroke-width='0.8'/%3E%3Ccircle cx='10' cy='13' r='2.8' fill='%2364748b' stroke='%230f172a' stroke-width='1'/%3E%3Ccircle cx='10' cy='13' r='1.1' fill='%23f59e0b'/%3E%3Crect x='4.5' y='10.5' width='2.5' height='5' rx='1' fill='%230f172a'/%3E%3C/svg%3E");
+}
+
+/* 5. Horizontal Ship - Middle Section 2 (Heavy Artillery Turret) */
+.cell.ship-mid-2-h .ship-segment,
+.ship-item[data-size="4"] .ship-segment:nth-child(2),
+#floatingShip[data-orient="H"][data-size="4"] .ship-segment:nth-child(2) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Crect x='0' y='4.5' width='26' height='17' fill='%23334155'/%3E%3Crect x='0' y='7' width='26' height='12' fill='%23475569'/%3E%3Cline x1='0' y1='4.5' x2='26' y2='4.5' stroke='%230f172a' stroke-width='1.5'/%3E%3Cline x1='0' y1='21.5' x2='26' y2='21.5' stroke='%230f172a' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='13' r='5.5' fill='%231e293b' stroke='%230f172a' stroke-width='1'/%3E%3Ccircle cx='12' cy='13' r='3.8' fill='%2364748b' stroke='%230f172a' stroke-width='0.8'/%3E%3Cline x1='14' y1='11.2' x2='24' y2='11.2' stroke='%230f172a' stroke-width='1.7' stroke-linecap='round'/%3E%3Cline x1='14' y1='14.8' x2='24' y2='14.8' stroke='%230f172a' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* 6. Vertical Ship - Stern (Back, Top end) */
+.cell.ship-start-v .ship-segment,
+#floatingShip[data-orient="V"] .ship-segment:first-child {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Cpath d='M4.5,26 L4.5,7 C4.5,4 7,2 10,2 L16,2 C19,2 21.5,4 21.5,7 L21.5,26 Z' fill='%23334155'/%3E%3Cpath d='M7,26 L7,8 C7,5.5 8.5,4 11,4 L15,4 C17.5,4 19,5.5 19,8 L19,26 Z' fill='%23475569'/%3E%3Cpath d='M4.5,26 L4.5,7 C4.5,4 7,2 10,2 L16,2 C19,2 21.5,4 21.5,7 L21.5,26' stroke='%230f172a' stroke-width='1.5' fill='none' stroke-linejoin='round'/%3E%3Cline x1='8' y1='6' x2='18' y2='6' stroke='%230f172a' stroke-width='1'/%3E%3Cpath d='M8,6 L10.5,10.5 L13,6 Z' fill='%23ef4444'/%3E%3Ccircle cx='13' cy='17' r='3.2' fill='%2364748b' stroke='%230f172a' stroke-width='0.9'/%3E%3Cline x1='13' y1='15' x2='13' y2='9' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M9.5,0.5 Q13,1.8 16.5,0.5' stroke='%2393c5fd' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* 7. Vertical Ship - Bow (Front, Bottom end, pointing ⬇️) */
+.cell.ship-end-v .ship-segment,
+#floatingShip[data-orient="V"] .ship-segment:last-child {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Cpath d='M4.5,0 L4.5,10 C4.5,16 8,21 13,24 C18,21 21.5,16 21.5,10 L21.5,0 Z' fill='%23334155'/%3E%3Cpath d='M7,0 L7,9 C7,14 9.5,18 13,20 C16.5,18 19,14 19,9 L19,0 Z' fill='%23475569'/%3E%3Cpath d='M4.5,0 L4.5,10 C4.5,16 8,21 13,24 C18,21 21.5,16 21.5,10 L21.5,0' stroke='%230f172a' stroke-width='1.5' fill='none' stroke-linejoin='round'/%3E%3Ccircle cx='13' cy='8' r='4' fill='%2364748b' stroke='%230f172a' stroke-width='1'/%3E%3Cline x1='11.2' y1='8' x2='11.2' y2='18' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='14.8' y1='8' x2='14.8' y2='18' stroke='%230f172a' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='13' y1='19.5' x2='13' y2='23' stroke='%2394a3b8' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* 8. Vertical Ship - Middle Section 1 (Bridge & Radar) */
+.cell.ship-mid[data-orient="V"] .ship-segment,
+.cell.ship-mid-1-v .ship-segment,
+#floatingShip[data-orient="V"] .ship-segment:not(:first-child):not(:last-child) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Crect x='4.5' y='0' width='17' height='26' fill='%23334155'/%3E%3Crect x='7' y='0' width='12' height='26' fill='%23475569'/%3E%3Cline x1='4.5' y1='0' x2='4.5' y2='26' stroke='%230f172a' stroke-width='1.5'/%3E%3Cline x1='21.5' y1='0' x2='21.5' y2='26' stroke='%230f172a' stroke-width='1.5'/%3E%3Crect x='8' y='5' width='10' height='16' rx='2' fill='%231e293b' stroke='%230f172a' stroke-width='1'/%3E%3Crect x='9.5' y='15' width='7' height='4.5' rx='1' fill='%2338bdf8'/%3E%3Cline x1='13' y1='15' x2='13' y2='19.5' stroke='%230f172a' stroke-width='0.8'/%3E%3Ccircle cx='13' cy='10' r='2.8' fill='%2364748b' stroke='%230f172a' stroke-width='1'/%3E%3Ccircle cx='13' cy='10' r='1.1' fill='%23f59e0b'/%3E%3Crect x='10.5' y='4.5' width='5' height='2.5' rx='1' fill='%230f172a'/%3E%3C/svg%3E");
+}
+
+/* 9. Vertical Ship - Middle Section 2 (Heavy Turret) */
+.cell.ship-mid-2-v .ship-segment,
+#floatingShip[data-orient="V"][data-size="4"] .ship-segment:nth-child(2) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' width='26' height='26'%3E%3Crect x='4.5' y='0' width='17' height='26' fill='%23334155'/%3E%3Crect x='7' y='0' width='12' height='26' fill='%23475569'/%3E%3Cline x1='4.5' y1='0' x2='4.5' y2='26' stroke='%230f172a' stroke-width='1.5'/%3E%3Cline x1='21.5' y1='0' x2='21.5' y2='26' stroke='%230f172a' stroke-width='1.5'/%3E%3Ccircle cx='13' cy='12' r='5.5' fill='%231e293b' stroke='%230f172a' stroke-width='1'/%3E%3Ccircle cx='13' cy='12' r='3.8' fill='%2364748b' stroke='%230f172a' stroke-width='0.8'/%3E%3Cline x1='11.2' y1='14' x2='11.2' y2='24' stroke='%230f172a' stroke-width='1.7' stroke-linecap='round'/%3E%3Cline x1='14.8' y1='14' x2='14.8' y2='24' stroke='%230f172a' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 .rooms-list {
@@ -321,31 +582,83 @@ input {
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.25s ease;
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-box {
     background: white;
-    padding: 15px;
-    border-radius: 4px;
+    padding: 24px;
+    border-radius: 16px;
     border: 2px solid #1e3a8a;
     width: 90%;
-    max-width: 300px;
+    max-width: 360px;
     text-align: center;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.modal-title { font-weight: 700; font-size: 1.2rem; color: #1e3a8a; margin-bottom: 6px; }
-.modal-text { font-size: 1rem; color: #334155; margin-bottom: 12px; }
-.modal-buttons { display: flex; gap: 8px; }
-.btn-modal-cancel { background: #e2e8f0; color: #1e3a8a; border: 1px solid #94a3b8; border-radius: 4px; padding: 6px; font-weight: 600; font-size: 1rem; flex: 1; cursor: pointer; font-family: 'Kalam', cursive; }
-.btn-modal-confirm { background: #dc2626; color: white; border: 1px solid #991b1b; border-radius: 4px; padding: 6px; font-weight: 600; font-size: 1rem; flex: 1; cursor: pointer; font-family: 'Kalam', cursive; }
+@keyframes modalPop {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.modal-title { font-weight: 700; font-size: 1.35rem; color: #1e3a8a; margin-bottom: 8px; }
+.modal-text { font-size: 1.05rem; color: #334155; margin-bottom: 16px; line-height: 1.4; }
+.modal-buttons { display: flex; gap: 10px; }
+.btn-modal-cancel { background: #f1f5f9; color: #1e3a8a; border: 1px solid #94a3b8; border-radius: 10px; padding: 8px 12px; font-weight: 700; font-size: 1rem; flex: 1; cursor: pointer; font-family: 'Kalam', cursive; transition: all 0.2s; }
+.btn-modal-cancel:hover { background: #e2e8f0; }
+.btn-modal-confirm { background: #dc2626; color: white; border: none; border-radius: 10px; padding: 8px 12px; font-weight: 700; font-size: 1rem; flex: 1; cursor: pointer; font-family: 'Kalam', cursive; transition: all 0.2s; }
+.btn-modal-confirm:hover { background: #b91c1c; }
+
+/* Toast Notifications */
+.game-toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    background: rgba(15, 23, 42, 0.92);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    font-family: 'Kalam', cursive;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.game-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -15px;
+    z-index: 9999;
+    animation: fall linear forwards;
+    pointer-events: none;
+}
+@keyframes fall {
+    to {
+        transform: translateY(105vh) rotate(720deg);
+    }
+}
 
 #floatingShip {
     position: fixed;
@@ -353,19 +666,230 @@ input {
     pointer-events: none;
     z-index: 1000;
     gap: 0px;
-    background: transparent;
+    background: rgba(224, 242, 254, 0.85);
+    border: 1px solid #93c5fd;
+    border-radius: 6px;
     padding: 2px;
-    transform: translate(-10px, -10px);
+    transform: translate(-13px, -13px);
+    box-shadow: 0 8px 24px rgba(30, 58, 138, 0.25);
 }
 #floatingShip.vertical { flex-direction: column; }
 
+.ship-item.selected {
+    border: 2px solid #2563eb !important;
+    background: #dbeafe !important;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.45) !important;
+    transform: scale(1.06) !important;
+}
+
+.hint-pill {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 0.88rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 6px;
+}
+
+/* Plující prvky v pozadí oceánu */
+.ocean-floating-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+.ocean-bubble {
+    position: absolute;
+    bottom: -60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: floatOcean 15s infinite linear;
+    pointer-events: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+@keyframes floatOcean {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.8); }
+    15% { opacity: 0.85; }
+    85% { opacity: 0.85; }
+    100% { opacity: 0; transform: translateY(-115vh) rotate(360deg) scale(1.15); }
+}
+.ocean-bubble:nth-child(1) { left: 8%; animation-delay: 0s; animation-duration: 14s; font-size: 20px; }
+.ocean-bubble:nth-child(2) { left: 26%; animation-delay: 4s; animation-duration: 18s; font-size: 24px; }
+.ocean-bubble:nth-child(3) { left: 50%; animation-delay: 1s; animation-duration: 15s; font-size: 22px; }
+.ocean-bubble:nth-child(4) { left: 72%; animation-delay: 6s; animation-duration: 17s; font-size: 20px; }
+.ocean-bubble:nth-child(5) { left: 90%; animation-delay: 3s; animation-duration: 13s; font-size: 24px; }
+
 .hidden { display: none !important; }
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px 8px;
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        padding-left: max(8px, env(safe-area-inset-left));
+        padding-right: max(8px, env(safe-area-inset-right));
+        background-attachment: scroll;
+    }
+    .container {
+        padding: 16px 10px;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 100%;
+    }
+    .container.in-battle {
+        padding: 14px 8px;
+        max-width: 100%;
+    }
+    h2 {
+        font-size: 1.85rem;
+        margin-bottom: 6px;
+    }
+    .room-badge {
+        font-size: 0.9rem;
+        padding: 2px 10px;
+    }
+    .status-box {
+        font-size: 0.95rem;
+        padding: 8px 10px;
+    }
+    .placement-toolbar {
+        gap: 6px;
+        margin: 6px 0 10px 0;
+    }
+    .btn-tool {
+        padding: 8px 10px;
+        font-size: 0.86rem;
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 42px;
+    }
+    .fleet-dock-header {
+        font-size: 0.88rem;
+    }
+    .fleet-dock {
+        gap: 6px;
+        padding: 8px 6px;
+        min-height: 55px;
+    }
+    .board-container {
+        padding: 8px 4px;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+    .battle-boards-row {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        width: 100%;
+    }
+    .fleet-status-bar {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    .fleet-status-card {
+        min-width: 0;
+        width: 100%;
+        padding: 6px 10px;
+    }
+    .fleet-chips {
+        gap: 3px;
+    }
+    .fleet-chip {
+        font-size: 0.75rem;
+        padding: 2px 4px;
+    }
+    .hint-pill {
+        font-size: 0.82rem;
+        padding: 4px 8px;
+    }
+    .btn {
+        padding: 12px 16px;
+        font-size: 1.05rem;
+        min-height: 46px;
+    }
+    .btn-secondary {
+        min-height: 42px;
+    }
+    .room-row {
+        padding: 6px 8px;
+    }
+    .btn-join, .btn-delete {
+        padding: 4px 8px;
+        font-size: 0.82rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 12px 6px;
+    }
+    .container.in-battle {
+        padding: 10px 4px;
+    }
+    .board-container {
+        padding: 6px 2px;
+    }
+    .grid {
+        grid-template-columns: repeat(10, 24px);
+        grid-template-rows: repeat(10, 24px);
+    }
+    .cell, .ship-segment {
+        width: 24px;
+        height: 24px;
+        background-size: 24px 24px;
+    }
+    .grid-col-header {
+        width: 24px;
+        height: 18px;
+        font-size: 0.82rem;
+    }
+    .grid-row-header {
+        width: 18px;
+        height: 24px;
+        font-size: 0.82rem;
+    }
+    .grid-row-top {
+        padding-left: 20px;
+    }
+    h2 {
+        font-size: 1.6rem;
+    }
+    .btn-tool {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+}
 </style>
 </head>
 <body>
 
-<div id="floatingShip"></div>
+<div class="ocean-floating-container">
+    <div class="ocean-bubble">🌊</div>
+    <div class="ocean-bubble">⚓</div>
+    <div class="ocean-bubble">⛵</div>
+    <div class="ocean-bubble">🧭</div>
+    <div class="ocean-bubble">💙</div>
+</div>
 
+<div id="floatingShip"></div>
+<div id="gameToast" class="game-toast"></div>
+
+<!-- Modal pro zavření místnosti -->
 <div class="modal-overlay" id="confirmModal">
     <div class="modal-box">
         <div class="modal-title">⛵ Zavřít místnost?</div>
@@ -377,13 +901,27 @@ input {
     </div>
 </div>
 
-<div class="container">
-    <h2>Lodě na papíře ⛵</h2>
+<!-- Modal pro vítězství -->
+<div class="modal-overlay" id="winModal">
+    <div class="modal-box win-modal-box">
+        <div style="font-size: 3.5rem; margin-bottom: 6px;">🏆</div>
+        <div class="modal-title" style="font-size: 1.6rem; color: #1e3a8a;">Slavné vítězství!</div>
+        <div class="modal-text" style="font-size: 1.05rem; line-height: 1.5; color: #334155;">Potopil jsi celou nepřátelskou flotilu a vyhrál námořní bitvu! 🎉⚓</div>
+        <div class="modal-buttons" style="margin-top: 15px;">
+            <button class="btn" onclick="location.reload()" style="margin: 0;">Hrát znovu 🔄</button>
+            <a href="menu.html" class="btn btn-secondary" style="margin: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Zpět do menu 🏠</a>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    <h2>Lodě na moři ⛵</h2>
     
     <div id="setupSection">
         <div class="status-box">Zadej název místnosti nebo vyber níže ze seznamu</div>
         <input type="text" id="roomInput" placeholder="Název místnosti...">
-        <button class="btn" onclick="joinGame()">Vstoupit do hry</button>
+        <button class="btn" onclick="joinGame()">Vstoupit do hry ⚓</button>
+        <a href="menu.html" class="btn btn-secondary" style="width:100%; margin-top:10px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">⬅️ Zpět do menu</a>
 
         <div class="rooms-list">
             <div class="rooms-title">📋 Otevřené místnosti:</div>
@@ -396,8 +934,17 @@ input {
         <div class="status-box" id="statusMessage">Načítání stavu hry...</div>
         
         <div id="placementPhase">
-            <p id="instructionText" style="font-size: 0.95rem; margin: 4px 0; font-weight: 600; color: #1e3a8a;">Klikni na loď v docku ➡️ přilepí se ke kurzoru (Mezerník = otočit)</p>
-            <button class="btn-secondary" id="rotateBtn" onclick="toggleOrientation()">Směr: Vodorovně ➡️ (nebo Mezerník)</button>
+            <p id="instructionText" style="font-size: 1rem; margin: 4px 0 8px 0; font-weight: 700; color: #1e3a8a;">
+                Vyber loď z doku k umístění na mřížku
+            </p>
+            
+            <div class="placement-toolbar">
+                <button class="btn-tool" id="rotateBtn" onclick="toggleOrientation()">🔄 Směr: Vodorovně ➡️</button>
+                <button class="btn-tool btn-tool-action" onclick="randomPlaceAll()">🎲 Náhodně rozmístit</button>
+                <button class="btn-tool btn-tool-danger" onclick="resetAllShips()">🗑️ Vyčistit</button>
+            </div>
+            
+            <div class="fleet-dock-header">⚓ Lodě k rozestavění (klikni pro výběr / otočení):</div>
             <div class="fleet-dock" id="fleetDock"></div>
             
             <div class="board-container">
@@ -410,33 +957,48 @@ input {
                 </div>
             </div>
             
-            <button class="btn" id="readyBtn" onclick="setReady()" disabled>Potvrdit rozestavění ⚓</button>
+            <div class="hint-pill">💡 Tip: Kliknutím na umístěnou loď ji zvedneš a přesuneš na jiné místo! (Mezerník ji otočí)</div>
+            
+            <button class="btn" id="readyBtn" onclick="setReady()" disabled style="margin-top: 14px;">Potvrdit rozestavění ⚓</button>
         </div>
 
         <div id="battlePhase" class="hidden">
-            <div class="board-container">
-                <div class="board-title">Nepřátelské moře (Střílej sem):</div>
-                <div class="grid-wrapper">
-                    <div class="grid-row-top" id="shootColHeaders"></div>
-                    <div class="grid-main-area">
-                        <div class="grid-row-headers" id="shootRowHeaders"></div>
-                        <div class="grid" id="shootingGrid"></div>
-                    </div>
+            <div class="fleet-status-bar">
+                <div class="fleet-status-card" id="enemyFleetCard">
+                    <div class="fleet-status-header">🎯 Nepřátelská flotila</div>
+                    <div class="fleet-chips" id="enemyFleetChips"></div>
+                </div>
+                <div class="fleet-status-card" id="myFleetCard">
+                    <div class="fleet-status-header">🛡️ Tvoje flotila</div>
+                    <div class="fleet-chips" id="myFleetChips"></div>
                 </div>
             </div>
-            <div class="board-container">
-                <div class="board-title">Tvoje flotila:</div>
-                <div class="grid-wrapper">
-                    <div class="grid-row-top" id="defenseColHeaders"></div>
-                    <div class="grid-main-area">
-                        <div class="grid-row-headers" id="defenseRowHeaders"></div>
-                        <div class="grid" id="myDefenseGrid"></div>
+
+            <div class="battle-boards-row">
+                <div class="board-container">
+                    <div class="board-title">🎯 Nepřátelské moře (Palba):</div>
+                    <div class="grid-wrapper">
+                        <div class="grid-row-top" id="shootColHeaders"></div>
+                        <div class="grid-main-area">
+                            <div class="grid-row-headers" id="shootRowHeaders"></div>
+                            <div class="grid" id="shootingGrid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="board-container">
+                    <div class="board-title">🛡️ Tvoje flotila (Obrana):</div>
+                    <div class="grid-wrapper">
+                        <div class="grid-row-top" id="defenseColHeaders"></div>
+                        <div class="grid-main-area">
+                            <div class="grid-row-headers" id="defenseRowHeaders"></div>
+                            <div class="grid" id="myDefenseGrid"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-secondary" onclick="location.reload()" style="width:100%; margin-top:10px;">Opustit hru</button>
+        <button class="btn btn-secondary" onclick="location.reload()" style="width:100%; margin-top:14px;">Opustit hru 🚪</button>
     </div>
 </div>
 
@@ -598,25 +1160,83 @@ input {
         });
     });
 
+    function showToast(msg) {
+        let toast = document.getElementById('gameToast');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    }
+
+    function spawnWinConfetti() {
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+        for (let i = 0; i < 70; i++) {
+            const conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = (Math.random() * 100) + 'vw';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (2 + Math.random() * 3) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            conf.style.width = (7 + Math.random() * 8) + 'px';
+            conf.style.height = (7 + Math.random() * 8) + 'px';
+            conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 6000);
+        }
+    }
+
     window.addEventListener('mousemove', (e) => {
         const floating = document.getElementById('floatingShip');
-        if (selectedShip) {
+        if (selectedShip && floating) {
             floating.style.left = e.clientX + 'px';
             floating.style.top = e.clientY + 'px';
         }
     });
 
+    window.addEventListener('touchmove', (e) => {
+        const floating = document.getElementById('floatingShip');
+        if (selectedShip && floating && e.touches.length > 0) {
+            floating.style.left = e.touches[0].clientX + 'px';
+            floating.style.top = e.touches[0].clientY + 'px';
+        }
+    }, { passive: true });
+
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && selectedShip) {
+        if (e.code === 'Escape' && selectedShip) {
+            e.preventDefault();
+            cancelSelection();
+            renderPlacementGrid();
+            renderDock();
+            showToast("Loď vrácena do doku ⚓");
+        } else if (e.code === 'Space' && selectedShip) {
             e.preventDefault();
             toggleOrientation();
+            showToast(orientation === 'H' ? 'Směr: Vodorovně ➡️' : 'Směr: Svisle ⬇️');
         }
     });
+
+    window.addEventListener('contextmenu', (e) => {
+        if (selectedShip) {
+            e.preventDefault();
+            toggleOrientation();
+            showToast(orientation === 'H' ? 'Směr: Vodorovně ➡️' : 'Směr: Svisle ⬇️');
+        }
+    });
+
+    window.addEventListener('wheel', (e) => {
+        if (selectedShip) {
+            toggleOrientation();
+            showToast(orientation === 'H' ? 'Směr: Vodorovně ➡️' : 'Směr: Svisle ⬇️');
+        }
+    }, { passive: true });
 
     window.joinGame = function() {
         const input = document.getElementById('roomInput').value.trim();
         if (!input) {
-            alert("Zadej prosím název místnosti!");
+            showToast("⚠️ Zadej prosím název místnosti!");
             return;
         }
         roomId = input;
@@ -644,7 +1264,7 @@ input {
             initPlacementUI();
             listenToGame();
         });
-    }
+    };
 
     function initPlacementUI() {
         buildGridHeaders('placeColHeaders', 'placeRowHeaders');
@@ -654,21 +1274,31 @@ input {
 
     function renderDock() {
         const dock = document.getElementById('fleetDock');
+        if (!dock) return;
         dock.innerHTML = '';
         if (availableShips.length === 0) {
-            dock.innerHTML = '<span style="font-size:1rem; color:#1e3a8a; font-weight:700;">Všechny lodě jsou na ploše! 🎉</span>';
+            dock.innerHTML = '<span style="font-size:1.05rem; color:#1e3a8a; font-weight:700;">Všechny lodě jsou na ploše! 🎉 Klikni níže na Potvrdit rozestavění.</span>';
             cancelSelection();
             return;
         }
         availableShips.forEach(ship => {
             const div = document.createElement('div');
             div.className = 'ship-item';
+            if (selectedShip && selectedShip.id === ship.id) {
+                div.classList.add('selected');
+            }
             div.setAttribute('data-size', ship.size);
             div.setAttribute('data-orient', 'H');
+            div.title = "Klikni pro výběr / otočení lodi";
 
             div.onclick = (e) => {
                 e.stopPropagation();
-                selectShip(ship);
+                if (selectedShip && selectedShip.id === ship.id) {
+                    toggleOrientation();
+                    showToast(orientation === 'H' ? 'Otočeno: Vodorovně ➡️' : 'Otočeno: Svisle ⬇️');
+                } else {
+                    selectShip(ship);
+                }
             };
 
             for (let i = 0; i < ship.size; i++) {
@@ -694,22 +1324,41 @@ input {
         
         updateFloatingOrientationStyle();
         floating.style.display = 'flex';
-        document.getElementById('instructionText').textContent = `Máš vybranou loď (${ship.size} dílky). Klikni na mřížku pro umístění (Mezerník otočí).`;
+        document.getElementById('instructionText').textContent = `Máš vybranou loď (${ship.size} dílky). Klikni na mřížku pro umístění (Klik / Mezerník otočí).`;
+        renderDock();
     }
 
     function cancelSelection() {
+        if (selectedShip) {
+            let onBoard = false;
+            for (let k in placedShipsMap) {
+                if (placedShipsMap[k] === selectedShip.id) {
+                    onBoard = true;
+                    break;
+                }
+            }
+            if (!onBoard && !availableShips.some(s => s.id === selectedShip.id)) {
+                availableShips.push({ id: selectedShip.id, size: selectedShip.size });
+            }
+        }
         selectedShip = null;
-        document.getElementById('floatingShip').style.display = 'none';
+        const floating = document.getElementById('floatingShip');
+        if (floating) floating.style.display = 'none';
+        renderDock();
     }
 
     window.toggleOrientation = function() {
         orientation = orientation === 'H' ? 'V' : 'H';
-        document.getElementById('rotateBtn').textContent = orientation === 'H' ? 'Směr: Vodorovně ➡️ (nebo Mezerník)' : 'Směr: Svisle ⬇️ (nebo Mezerník)';
+        const rotateBtn = document.getElementById('rotateBtn');
+        if (rotateBtn) {
+            rotateBtn.textContent = orientation === 'H' ? '🔄 Směr: Vodorovně ➡️' : '🔄 Směr: Svisle ⬇️';
+        }
         updateFloatingOrientationStyle();
-    }
+    };
 
     function updateFloatingOrientationStyle() {
         const floating = document.getElementById('floatingShip');
+        if (!floating) return;
         if (orientation === 'V') {
             floating.classList.add('vertical');
             floating.setAttribute('data-orient', 'V');
@@ -719,8 +1368,87 @@ input {
         }
     }
 
+    window.randomPlaceAll = function() {
+        placedShipsMap = {};
+        cancelSelection();
+        
+        const allFleet = [
+            { id: '4_1', size: 4 },
+            { id: '3_1', size: 3 },
+            { id: '3_2', size: 3 },
+            { id: '2_1', size: 2 },
+            { id: '2_2', size: 2 },
+            { id: '2_3', size: 2 },
+            { id: '1_1', size: 1 },
+            { id: '1_2', size: 1 },
+            { id: '1_3', size: 1 },
+            { id: '1_4', size: 1 }
+        ];
+
+        availableShips = [];
+
+        for (const ship of allFleet) {
+            let placed = false;
+            let attempts = 0;
+            while (!placed && attempts < 400) {
+                attempts++;
+                const isVert = Math.random() < 0.5;
+                const row = Math.floor(Math.random() * (isVert ? (10 - ship.size + 1) : 10));
+                const col = Math.floor(Math.random() * (isVert ? 10 : (10 - ship.size + 1)));
+                const startIndex = row * 10 + col;
+
+                let fits = true;
+                const targetIndices = [];
+                for (let i = 0; i < ship.size; i++) {
+                    const idx = isVert ? startIndex + (i * 10) : startIndex + i;
+                    if (placedShipsMap[idx]) {
+                        fits = false;
+                        break;
+                    }
+                    targetIndices.push(idx);
+                }
+
+                if (fits) {
+                    targetIndices.forEach(idx => {
+                        placedShipsMap[idx] = ship.id;
+                    });
+                    placed = true;
+                }
+            }
+        }
+
+        renderPlacementGrid();
+        renderDock();
+        document.getElementById('readyBtn').disabled = false;
+        document.getElementById('instructionText').textContent = "Lodě byly náhodně rozmístěny! Můžeš libovolnou loď kliknutím otočit či posunout. 🎉";
+        showToast("Lodě náhodně rozmístěny! 🎲");
+    };
+
+    window.resetAllShips = function() {
+        placedShipsMap = {};
+        availableShips = [
+            { id: '4_1', size: 4 },
+            { id: '3_1', size: 3 },
+            { id: '3_2', size: 3 },
+            { id: '2_1', size: 2 },
+            { id: '2_2', size: 2 },
+            { id: '2_3', size: 2 },
+            { id: '1_1', size: 1 },
+            { id: '1_2', size: 1 },
+            { id: '1_3', size: 1 },
+            { id: '1_4', size: 1 }
+        ];
+        cancelSelection();
+        renderPlacementGrid();
+        renderDock();
+        document.getElementById('readyBtn').disabled = true;
+        document.getElementById('instructionText').textContent = "Plocha byla vyčištěna. Vyber loď z doku k umístění.";
+        showToast("Plocha vyčištěna 🗑️");
+    };
+
     function renderPlacementGrid() {
         const grid = document.getElementById('placementGrid');
+        if (!grid) return;
         grid.innerHTML = '';
 
         const shipObjectsLocal = {};
@@ -735,7 +1463,7 @@ input {
             let indices = shipObjectsLocal[sId].sort((a, b) => a - b);
             let size = indices.length;
             if (size === 1) {
-                cellInfo[indices[0]] = { type: 'ship-1', orient: indices[0] >= 10 && indices[1] === indices[0]+10 ? 'V' : 'H' };
+                cellInfo[indices[0]] = { type: 'ship-1', orient: 'H' };
             } else {
                 let isVert = indices[1] - indices[0] === 10;
                 indices.forEach((idx, i) => {
@@ -744,7 +1472,8 @@ input {
                     } else if (i === size - 1) {
                         cellInfo[idx] = { type: isVert ? 'ship-end-v' : 'ship-end-h', orient: isVert ? 'V' : 'H' };
                     } else {
-                        cellInfo[idx] = { type: 'ship-mid', orient: isVert ? 'V' : 'H' };
+                        const midType = isVert ? (i === 1 ? 'ship-mid-2-v' : 'ship-mid-1-v') : (i === 1 ? 'ship-mid-2-h' : 'ship-mid-1-h');
+                        cellInfo[idx] = { type: midType, orient: isVert ? 'V' : 'H' };
                     }
                 });
             }
@@ -757,33 +1486,83 @@ input {
             if (placedShipsMap[i]) {
                 const info = cellInfo[i] || { type: 'ship-mid', orient: 'H' };
                 btn.classList.add(info.type);
+                if (info.type.startsWith('ship-mid')) btn.classList.add('ship-mid');
                 btn.setAttribute('data-orient', info.orient);
                 const seg = document.createElement('div');
                 seg.className = 'ship-segment';
                 btn.appendChild(seg);
+                btn.title = "Klikni pro zvednutí a přesunutí lodi (pravé tlačítko = do doku)";
             } else {
                 btn.style.background = '#ffffff';
             }
 
             const currentIndex = i;
-            btn.onclick = () => {
+            btn.onclick = (e) => {
                 if (placedShipsMap[currentIndex]) {
-                    const targetShipId = placedShipsMap[currentIndex];
-                    let shipSize = parseInt(targetShipId.split('_')[0]);
+                    // Pokud už držíme jinou loď k umístění, zkusíme umístit na toto políčko (případně nahlásí kolizi)
+                    if (selectedShip && selectedShip.id !== placedShipsMap[currentIndex]) {
+                        placeSelectedShip(currentIndex);
+                        return;
+                    }
 
+                    // Kliknutí na loď na ploše ji zvedne pro přesun!
+                    const targetShipId = placedShipsMap[currentIndex];
+                    const shipIndices = [];
+                    for (let k in placedShipsMap) {
+                        if (placedShipsMap[k] === targetShipId) shipIndices.push(parseInt(k));
+                    }
+                    shipIndices.sort((a, b) => a - b);
+                    const size = shipIndices.length;
+                    const isVert = size > 1 ? (shipIndices[1] - shipIndices[0] === 10) : (orientation === 'V');
+
+                    // Odstraníme loď z aktuálních políček
                     for (let k in placedShipsMap) {
                         if (placedShipsMap[k] === targetShipId) delete placedShipsMap[k];
                     }
 
+                    // Zachováme orientaci lodi
+                    orientation = isVert ? 'V' : 'H';
+                    const rotateBtn = document.getElementById('rotateBtn');
+                    if (rotateBtn) {
+                        rotateBtn.textContent = orientation === 'H' ? '🔄 Směr: Vodorovně ➡️' : '🔄 Směr: Svisle ⬇️';
+                    }
+
+                    selectedShip = { id: targetShipId, size: size };
+                    selectShip(selectedShip);
+
+                    const floating = document.getElementById('floatingShip');
+                    if (floating && e && e.clientX && e.clientY) {
+                        floating.style.left = e.clientX + 'px';
+                        floating.style.top = e.clientY + 'px';
+                    }
+
+                    renderPlacementGrid();
+                    renderDock();
+                    document.getElementById('readyBtn').disabled = true;
+                    document.getElementById('instructionText').textContent = `⚓ Loď zvednuta (${size} dílky). Klikni na nové políčko pro přesun (nebo Mezerník / klik v doku otočí).`;
+                    showToast("Loď zvednuta – klikni na nové místo pro přesun ⚓");
+                    return;
+                }
+
+                if (selectedShip) {
+                    placeSelectedShip(currentIndex);
+                }
+            };
+
+            btn.oncontextmenu = (e) => {
+                e.preventDefault();
+                if (placedShipsMap[currentIndex]) {
+                    const targetShipId = placedShipsMap[currentIndex];
+                    let shipSize = parseInt(targetShipId.split('_')[0]);
+                    for (let k in placedShipsMap) {
+                        if (placedShipsMap[k] === targetShipId) delete placedShipsMap[k];
+                    }
                     availableShips.push({ id: targetShipId, size: shipSize });
                     renderPlacementGrid();
                     renderDock();
                     document.getElementById('readyBtn').disabled = true;
-                    document.getElementById('instructionText').textContent = "Loď vrácena do docku. Vyber jinou.";
-                    return;
+                    showToast("Loď vrácena do doku ⚓");
                 }
-
-                if (selectedShip) placeSelectedShip(currentIndex);
             };
 
             grid.appendChild(btn);
@@ -796,11 +1575,11 @@ input {
         const size = selectedShip.size;
 
         if (orientation === 'H' && col + size > 10) {
-            alert("Loď se v tomto směru vejde na řádek!");
+            showToast("⚠️ Loď se nevejde na řádek!");
             return;
         }
         if (orientation === 'V' && row + size > 10) {
-            alert("Loď se v tomto směru vejde do sloupce!");
+            showToast("⚠️ Loď se nevejde do sloupce!");
             return;
         }
 
@@ -808,7 +1587,7 @@ input {
         for (let i = 0; i < size; i++) {
             let targetIndex = orientation === 'H' ? index + i : index + (i * 10);
             if (placedShipsMap[targetIndex]) {
-                alert("Tady už nějaká loď překáží!");
+                showToast("⚠️ Tady už nějaká loď překáží!");
                 return;
             }
             targetIndices.push(targetIndex);
@@ -824,11 +1603,12 @@ input {
         renderPlacementGrid();
         renderDock();
 
-        document.getElementById('instructionText').textContent = "Klikni na loď v docku ➡️ přilepí se ke kurzoru";
-
         if (availableShips.length === 0) {
             document.getElementById('readyBtn').disabled = false;
             document.getElementById('instructionText').textContent = "Všechny lodě jsou rozestavěné! Můžeš potvrdit hru. 🎉";
+            showToast("Všechny lodě připraveny! ⚓");
+        } else {
+            document.getElementById('instructionText').textContent = "Klikni na loď v docku ➡️ (kliknutí / pravé tlačítko / Mezerník otočí)";
         }
     }
 
@@ -859,7 +1639,7 @@ input {
         
         document.getElementById('placementPhase').classList.add('hidden');
         document.getElementById('statusMessage').textContent = "Čekáme, až druhá strana rozmístí lodě... ⏳";
-    }
+    };
 
     function listenToGame() {
         const roomRef = ref(db, 'rooms/' + roomId);
@@ -868,7 +1648,6 @@ input {
             if (!data) return;
             gameState = data;
 
-            // OPRAVA: Kontrolujeme, zda jsou oba hráči připraveni, bez ohledu na to, v jakém stavu (placement/battle) místnost zrovna je, abychom zajistili spolehlivý přechod do bitvy.
             if (data.p1Ready && data.p2Ready && data.status !== 'battle') {
                 if (playerRole === 'p1') {
                     update(roomRef, { status: 'battle' });
@@ -878,6 +1657,8 @@ input {
             if (data.status === 'battle') {
                 document.getElementById('placementPhase').classList.add('hidden');
                 document.getElementById('battlePhase').classList.remove('hidden');
+                const mainCont = document.getElementById('mainContainer');
+                if (mainCont) mainCont.classList.add('in-battle');
                 
                 buildGridHeaders('shootColHeaders', 'shootRowHeaders');
                 buildGridHeaders('defenseColHeaders', 'defenseRowHeaders');
@@ -885,13 +1666,51 @@ input {
                 
                 const isMyTurn = data.turn === playerRole;
                 const statusBox = document.getElementById('statusMessage');
-                if (!statusBox.dataset.sunkNotice) {
-                    statusBox.textContent = isMyTurn ? 
-                        "Tvůj tah! Zvol políčko na nepřátelské mřížce 🎯" : 
-                        "Na tahu je druhá strana, vyčkej na její útok... ☕";
+                if (isMyTurn) {
+                    statusBox.className = 'status-box my-turn';
+                    if (!statusBox.dataset.sunkNotice) {
+                        statusBox.textContent = "🎯 Tvůj tah! Zvol políčko pro palbu na nepřátelské mřížce";
+                    }
+                } else {
+                    statusBox.className = 'status-box opp-turn';
+                    if (!statusBox.dataset.sunkNotice) {
+                        statusBox.textContent = "⏳ Na tahu je druhá strana, vyčkej na její útok...";
+                    }
                 }
             }
         });
+    }
+
+    function updateFleetStatus(oppKey) {
+        const oppShipObjects = gameState[oppKey + 'ShipObjects'] || {};
+        const myShipObjects = gameState[playerRole + 'ShipObjects'] || {};
+        const myShots = gameState[playerRole + 'Shots'] || {};
+        const oppShots = gameState[oppKey + 'Shots'] || {};
+
+        const renderChips = (containerId, shipObjects, shots) => {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const entries = Object.entries(shipObjects);
+            entries.sort((a, b) => b[1].indices.length - a[1].indices.length);
+
+            let aliveCount = 0;
+            entries.forEach(([id, obj]) => {
+                const size = obj.indices.length;
+                const isSunk = obj.indices.every(idx => shots[idx] === 'hit');
+                if (!isSunk) aliveCount++;
+
+                const chip = document.createElement('span');
+                chip.className = 'fleet-chip' + (isSunk ? ' sunk' : '');
+                const icon = size === 4 ? '🚢' : (size === 3 ? '⛵' : (size === 2 ? '🚤' : '🚣'));
+                chip.textContent = `${icon} ${size}p ${isSunk ? '✕' : '✓'}`;
+                container.appendChild(chip);
+            });
+        };
+
+        renderChips('enemyFleetChips', oppShipObjects, myShots);
+        renderChips('myFleetChips', myShipObjects, oppShots);
     }
 
     function renderBattleBoards() {
@@ -905,22 +1724,12 @@ input {
         for (let i = 0; i < BOARD_SIZE; i++) {
             const btn = document.createElement('button');
             btn.classList.add('cell');
-            let bgColor = '#ffffff';
             
             if (shotsData[i] === 'hit') {
-                bgColor = '#ffffff';
-                const img = document.createElement('img');
-                img.src = FIRE_PHOTO_URL;
-                img.className = 'ship-photo';
-                btn.appendChild(img);
+                btn.classList.add('cell-hit');
             } else if (shotsData[i] === 'miss') {
-                bgColor = '#ffffff';
-                btn.textContent = '•';
-                btn.style.color = '#94a3b8';
-                btn.style.fontWeight = 'bold';
+                btn.classList.add('cell-miss');
             }
-            
-            btn.style.background = bgColor;
             
             const currentIndex = i;
             btn.onclick = () => fireShot(currentIndex, oppShips, shotsData);
@@ -947,7 +1756,8 @@ input {
                     } else if (i === size - 1) {
                         defCellInfo[idx] = { type: isVert ? 'ship-end-v' : 'ship-end-h', orient: isVert ? 'V' : 'H' };
                     } else {
-                        defCellInfo[idx] = { type: 'ship-mid', orient: isVert ? 'V' : 'H' };
+                        const midType = isVert ? (i === 1 ? 'ship-mid-2-v' : 'ship-mid-1-v') : (i === 1 ? 'ship-mid-2-h' : 'ship-mid-1-h');
+                        defCellInfo[idx] = { type: midType, orient: isVert ? 'V' : 'H' };
                     }
                 });
             }
@@ -956,46 +1766,44 @@ input {
         for (let i = 0; i < BOARD_SIZE; i++) {
             const div = document.createElement('div');
             div.classList.add('cell');
-            let bgColor = '#ffffff';
 
             if (myActiveShips[i]) {
                 const info = defCellInfo[i] || { type: 'ship-mid', orient: 'H' };
                 div.classList.add(info.type);
+                if (info.type.startsWith('ship-mid')) div.classList.add('ship-mid');
                 div.setAttribute('data-orient', info.orient);
                 const seg = document.createElement('div');
-                    seg.className = 'ship-segment';
+                seg.className = 'ship-segment';
                 div.appendChild(seg);
             }
             if (myOpponentShots[i] === 'hit') {
-                div.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = FIRE_PHOTO_URL;
-                img.className = 'ship-photo';
-                div.appendChild(img);
+                div.classList.add('cell-burning');
             } else if (myOpponentShots[i] === 'miss') {
-                bgColor = '#ffffff';
-                div.textContent = '•';
-                div.style.color = '#94a3b8';
-                div.style.fontWeight = 'bold';
+                div.classList.add('cell-miss');
             }
 
-            div.style.background = bgColor;
             defenseGrid.appendChild(div);
         }
 
+        updateFleetStatus(oppKey);
         checkWinAndSunk(oppShips, shotsData, myActiveShips, myOpponentShots, oppKey);
     }
 
     function fireShot(index, oppShips, shotsData) {
-        if (gameState.turn !== playerRole) return;
-        if (shotsData[index] !== undefined && shotsData[index] !== null) return; 
+        if (gameState.turn !== playerRole) {
+            showToast("⏳ Nyní je na tahu soupeř!");
+            return;
+        }
+        if (shotsData[index] !== undefined && shotsData[index] !== null) {
+            showToast("Na toto políčko jsi už střílel!");
+            return; 
+        }
 
         const updatedShots = { ...shotsData };
         const isHit = oppShips[index] === true;
         updatedShots[index] = isHit ? 'hit' : 'miss';
 
         const nextTurn = playerRole === 'p1' ? 'p2' : 'p1';
-
         const oppKey = playerRole === 'p1' ? 'p2' : 'p1';
         const oppShipObjects = gameState[oppKey + 'ShipObjects'];
         
@@ -1007,11 +1815,16 @@ input {
                     const allHit = shipIndices.every(idx => idx === index || updatedShots[idx] === 'hit');
                     if (allHit) {
                         let size = shipIndices.length;
-                        sunkMessage = `💥 Zásah! Úspěšně jsi potopil nepřátelskou loď (${size} dílky)! 🎉`;
+                        sunkMessage = `💥 ZÁSAH A POTOPENA! Úspěšně jsi potopil nepřátelskou loď (${size} dílky)! 🌊🎉`;
+                        showToast(`💥 Potopil jsi nepřátelskou loď (${size}p)!`);
+                    } else {
+                        showToast("💥 Zásah nepřátelské lodi!");
                     }
                     break;
                 }
             }
+        } else {
+            showToast("💧 Voda! Minul jsi.");
         }
 
         const updates = {};
@@ -1048,8 +1861,13 @@ input {
 
         if (oppShipCount > 0 && myHits === oppShipCount) {
             document.getElementById('statusMessage').textContent = "Gratuluji! Zničil jsi všechny nepřátelské lodě a vyhrál! 🏆";
+            const winModal = document.getElementById('winModal');
+            if (winModal && !winModal.classList.contains('active')) {
+                winModal.classList.add('active');
+                spawnWinConfetti();
+            }
         } else if (myShipCount > 0 && oppHits === myShipCount) {
-            document.getElementById('statusMessage' ).textContent = "Protivník potopil všechny tvé lodě, vyhrál on! 🙈";
+            document.getElementById('statusMessage').textContent = "Protivník potopil všechny tvé lodě, vyhrál on! 🙈";
         }
     }
 </script>

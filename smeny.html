@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Výdělek ze směn 💰</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px 12px;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(32px, env(safe-area-inset-bottom));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    position: relative;
+    color: #2d3748;
+    touch-action: manipulation;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Plovoucí dekorativní ikony */
+.floating-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.float-icon {
+    position: absolute;
+    opacity: 0.22;
+    animation: floatAnim 16s infinite linear;
+    bottom: -30px;
+    font-size: 1.25rem;
+    user-select: none;
+}
+
+@keyframes floatAnim {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    15% { opacity: 0.35; }
+    85% { opacity: 0.35; }
+    100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+}
+
+.float-icon:nth-child(1) { left: 8%; animation-delay: 0s; animation-duration: 14s; }
+.float-icon:nth-child(2) { left: 24%; animation-delay: 4s; animation-duration: 18s; }
+.float-icon:nth-child(3) { left: 52%; animation-delay: 1s; animation-duration: 13s; }
+.float-icon:nth-child(4) { left: 74%; animation-delay: 6s; animation-duration: 16s; }
+.float-icon:nth-child(5) { left: 90%; animation-delay: 2s; animation-duration: 12s; }
+
+/* Hlavní kontejner aplikace */
+.app-container {
+    width: 100%;
+    max-width: 580px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+    padding: 22px 18px;
+    position: relative;
+    z-index: 10;
+    margin: auto;
+}
+
+/* Navigační lišta */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 8px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid #ffd1dc;
+    color: #e11d48;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(225, 29, 72, 0.08);
+    min-height: 40px;
+}
+
+.btn-back:hover, .btn-back:active {
+    background: #fff1f2;
+    transform: scale(0.98);
+}
+
+.header-title-box {
+    text-align: center;
+    flex: 1;
+}
+
+.header-tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #e11d48;
+    font-weight: 700;
+}
+
+.header-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.btn-settings-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #475569;
+}
+
+.btn-settings-toggle:hover, .btn-settings-toggle:active {
+    background: #f8fafc;
+    color: #e11d48;
+    border-color: #fecdd3;
+}
+
+/* Přepínání měsíce */
+.month-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 18px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.month-nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.month-nav-btn:hover, .month-nav-btn:active {
+    background: #fee2e2;
+    color: #e11d48;
+    border-color: #fecdd3;
+}
+
+.month-label-box {
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.month-name {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: capitalize;
+}
+
+.btn-today-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #e11d48;
+    background: #ffe4e6;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-today-badge:hover, .btn-today-badge:active {
+    background: #fecdd3;
+}
+
+/* Nastavení sazeb (rozklikávací panel) */
+.settings-panel {
+    display: none;
+    background: #ffffff;
+    border: 1.5px solid #fecdd3;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.08);
+    animation: fadeIn 0.25s ease;
+}
+
+.settings-panel.active {
+    display: block;
+}
+
+.settings-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.input-with-addon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    font-size: 16px; /* Zabraňuje iOS auto-zoomu */
+    font-family: inherit;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s;
+    min-height: 46px;
+}
+
+.form-input:focus {
+    border-color: #ff4d6d;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.15);
+}
+
+.input-addon {
+    position: absolute;
+    right: 12px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+/* Hlavní karta s celkovým výdělkem */
+.hero-earnings-card {
+    background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 50%, #800f2f 100%);
+    border-radius: 22px;
+    padding: 20px 18px;
+    color: #ffffff;
+    box-shadow: 0 12px 28px rgba(201, 24, 74, 0.28);
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-earnings-card::after {
+    content: "💰";
+    position: absolute;
+    right: 10px;
+    bottom: -8px;
+    font-size: 4.8rem;
+    opacity: 0.16;
+    pointer-events: none;
+}
+
+.earnings-subtitle {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.earnings-amount {
+    font-size: 2.3rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.earnings-currency {
+    font-size: 1.25rem;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 14px;
+    padding: 9px 6px;
+    text-align: center;
+}
+
+.stat-val {
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.stat-lbl {
+    font-size: 0.68rem;
+    opacity: 0.92;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.progress-split-box {
+    margin-top: 12px;
+    background: rgba(0, 0, 0, 0.16);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.76rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.split-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+}
+
+.split-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.dot-done { background: #4ade80; }
+.dot-future { background: #60a5fa; }
+
+/* Nápověda pro uživatele */
+.click-hint-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #e11d48;
+    background: #fff1f2;
+    border: 1px dashed #fecdd3;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Přepínač zobrazení Kalendář / Seznam */
+.view-tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 14px;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.view-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+}
+
+.view-tab.active {
+    background: #ffffff;
+    color: #ff2a6d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Kalendář */
+.calendar-view {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 12px 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    border: 1.5px solid #f1f5f9;
+    margin-bottom: 14px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+/* Buňka kalendáře */
+.calendar-cell {
+    min-height: 60px;
+    border-radius: 12px;
+    padding: 4px 3px;
+    background: #f8fafc;
+    border: 1.5px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    position: relative;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.calendar-cell:hover {
+    border-color: #fecdd3;
+    background: #fff1f2;
+}
+
+.calendar-cell:active {
+    transform: scale(0.95);
+    background: #fee2e2;
+}
+
+.calendar-cell.other-month {
+    opacity: 0.25;
+    background: transparent;
+    cursor: default;
+    pointer-events: none;
+    border-color: transparent;
+}
+
+.calendar-cell.today {
+    border-color: #ff4d6d;
+    background: #fff5f7;
+    font-weight: 800;
+}
+
+.calendar-cell.today .day-number {
+    color: #e11d48;
+}
+
+.calendar-cell.weekend {
+    background: #f1f5f9;
+}
+
+.calendar-cell.weekend .day-number {
+    color: #b91c1c;
+}
+
+.cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+}
+
+.day-number {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.today-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff4d6d;
+    pointer-events: none;
+}
+
+/* Směny v buňce */
+.cell-shift {
+    border-radius: 6px;
+    padding: 2px 2px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.15;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.shift-ranni { background: #fef08a; color: #854d0e; }
+.shift-odpoledni { background: #fed7aa; color: #9a3412; }
+.shift-nocni { background: #bfdbfe; color: #1e40af; }
+.shift-dvanactka_den { background: #bbf7d0; color: #166534; }
+.shift-dvanactka_noc { background: #ddd6fe; color: #5b21b6; }
+.shift-vlastni { background: #fce7f3; color: #9d174d; }
+
+.cell-money {
+    font-size: 0.60rem;
+    font-weight: 800;
+    color: #059669;
+    text-align: right;
+    margin-top: auto;
+    letter-spacing: -0.2px;
+    pointer-events: none;
+}
+
+/* Seznam směn */
+.list-view {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.list-view.active {
+    display: flex;
+}
+
+.shift-card-item {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1.5px solid #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.shift-card-item:hover, .shift-card-item:active {
+    border-color: #fecdd3;
+    background: #fffcfd;
+}
+
+.shift-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.date-dayname {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.date-daynum {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.shift-info-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.shift-title-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.shift-badge-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+}
+
+.shift-hours-text {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.shift-weekend-tag {
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 1px 6px;
+    border-radius: 6px;
+}
+
+.shift-note-text {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.shift-item-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: right;
+}
+
+.shift-earn-val {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #059669;
+}
+
+.btn-item-delete {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: #fef2f2;
+    color: #ef4444;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.btn-item-delete:hover, .btn-item-delete:active {
+    background: #fee2e2;
+    transform: scale(1.08);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 2px dashed #f1f5f9;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+}
+
+.empty-text {
+    font-size: 0.92rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Akční tlačítka vespod */
+.action-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.btn-action-primary {
+    flex: 2;
+    background: linear-gradient(135deg, #ff4d6d 0%, #e11d48 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 13px 18px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(225, 29, 72, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    min-height: 48px;
+}
+
+.btn-action-primary:hover, .btn-action-primary:active {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(225, 29, 72, 0.35);
+}
+
+.btn-action-secondary {
+    flex: 1.1;
+    background: #ffffff;
+    color: #334155;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 13px 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    min-height: 48px;
+}
+
+.btn-action-secondary:hover, .btn-action-secondary:active {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Tlačítko: Smazat všechny směny */
+.delete-all-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-delete-all {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1.5px solid #fecdd3;
+    border-radius: 14px;
+    padding: 11px 18px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    min-height: 44px;
+    width: 100%;
+}
+
+.btn-delete-all:hover, .btn-delete-all:active {
+    background: #fee2e2;
+    border-color: #f87171;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+/* Modální okno pro datum */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    z-index: 1000;
+    touch-action: manipulation;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 24px;
+    padding: 22px 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-height: 94vh;
+    max-height: 94dvh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid #f1f5f9;
+}
+
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.modal-title-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-date-tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #e11d48;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+.btn-modal-close {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 1.35rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-modal-close:hover, .btn-modal-close:active {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Pole s počtem hodin a rychlými tlačítky */
+.hours-control-block {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.hours-top-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.hours-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.hours-input-wrapper {
+    position: relative;
+    width: 140px;
+}
+
+.hours-number-input {
+    width: 100%;
+    padding: 8px 38px 8px 12px;
+    font-size: 18px; /* Zabraňuje iOS auto-zoomu */
+    font-family: inherit;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 800;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+    min-height: 44px;
+}
+
+.hours-number-input:focus {
+    border-color: #ff4d6d;
+    box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.18);
+}
+
+.hours-addon-label {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.hour-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.btn-hour-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 32px;
+}
+
+.btn-hour-pill:hover, .btn-hour-pill:active {
+    background: #fff1f2;
+    border-color: #ff4d6d;
+    color: #e11d48;
+}
+
+/* Typy směn */
+.presets-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.btn-preset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    min-height: 48px;
+    user-select: none;
+}
+
+.btn-preset:hover, .btn-preset.selected {
+    border-color: #ff4d6d;
+    background: #fff1f2;
+    color: #e11d48;
+}
+
+.preset-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.preset-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.btn-preset.selected .preset-title {
+    color: #e11d48;
+}
+
+/* Speciální box pro víkendový příplatek +10% */
+.weekend-toggle-box {
+    background: #fff1f2;
+    border: 1.5px solid #fecdd3;
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    user-select: none;
+}
+
+.weekend-toggle-box:hover {
+    background: #ffe4e6;
+}
+
+.weekend-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.weekend-toggle-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #9f1239;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.weekend-toggle-sub {
+    font-size: 0.72rem;
+    color: #e11d48;
+    font-weight: 600;
+}
+
+.weekend-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #e11d48;
+    transform: scale(1.15);
+}
+
+/* Formulář v modálu */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.extra-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* Živý náhled výpočtu */
+.calc-preview-box {
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.calc-preview-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #166534;
+}
+
+.calc-preview-details {
+    font-size: 0.72rem;
+    color: #15803d;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.calc-preview-val {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #15803d;
+    white-space: nowrap;
+}
+
+/* Patička tlačítek v modálu */
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn-modal-save {
+    flex: 2;
+    background: linear-gradient(135deg, #ff4d6d 0%, #e11d48 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 13px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 48px;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-modal-save:hover, .btn-modal-save:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.35);
+}
+
+.btn-modal-delete {
+    flex: 1.2;
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1.5px solid #fecdd3;
+    border-radius: 14px;
+    padding: 13px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 48px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-modal-delete:hover, .btn-modal-delete:active {
+    background: #fecdd3;
+    transform: scale(0.98);
+}
+
+/* Modální okno pro smazání všech směn */
+.confirm-modal-box {
+    text-align: center;
+    padding: 6px 4px;
+}
+
+.confirm-modal-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+}
+
+.confirm-modal-title {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.confirm-modal-desc {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin-bottom: 18px;
+    line-height: 1.45;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-confirm-month {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1.5px solid #fecdd3;
+    border-radius: 14px;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 46px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-confirm-month:hover, .btn-confirm-month:active {
+    background: #fecdd3;
+    color: #991b1b;
+}
+
+.btn-confirm-all {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 46px;
+    transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-confirm-all:hover, .btn-confirm-all:active {
+    background: #b91c1c;
+}
+
+.btn-confirm-cancel {
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 14px;
+    padding: 11px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: inherit;
+    min-height: 44px;
+    margin-top: 4px;
+}
+
+.btn-confirm-cancel:hover {
+    background: #e2e8f0;
+}
+
+/* Toast notifikace */
+.toast-notice {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #0f172a;
+    color: #ffffff;
+    padding: 11px 20px;
+    border-radius: 30px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast-notice.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* Responzivní přizpůsobení */
+@media (max-width: 480px) {
+    body {
+        padding: 8px 6px;
+        padding-top: max(8px, env(safe-area-inset-top));
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+        padding-left: max(6px, env(safe-area-inset-left));
+        padding-right: max(6px, env(safe-area-inset-right));
+    }
+    
+    .app-container {
+        padding: 14px 10px;
+        border-radius: 20px;
+    }
+    
+    .earnings-amount {
+        font-size: 1.95rem;
+    }
+    
+    .calendar-cell {
+        min-height: 52px;
+        padding: 3px 2px;
+        border-radius: 10px;
+    }
+    
+    .day-number {
+        font-size: 0.72rem;
+    }
+    
+    .cell-shift {
+        font-size: 0.58rem;
+        padding: 1px 2px;
+    }
+    
+    .cell-money {
+        font-size: 0.56rem;
+    }
+    
+    .preset-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .earnings-amount {
+        font-size: 1.65rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 12px;
+    }
+    
+    .calendar-cell {
+        min-height: 46px;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- Plovoucí animované ikony v pozadí -->
+<div class="floating-bg">
+    <div class="float-icon">💰</div>
+    <div class="float-icon">✨</div>
+    <div class="float-icon">💖</div>
+    <div class="float-icon">🪙</div>
+    <div class="float-icon">⭐</div>
+</div>
+
+<div class="app-container">
+    <!-- Horní navigační lišta -->
+    <div class="top-bar">
+        <a href="menu.html" class="btn-back">
+            <span>←</span> Menu
+        </a>
+        <div class="header-title-box">
+            <div class="header-tag">Můj výdělek</div>
+            <h1 class="header-title">Počítadlo směn 💰</h1>
+        </div>
+        <button id="btnToggleSettings" class="btn-settings-toggle" title="Nastavení hodinové mzdy a příplatků" aria-label="Nastavení">
+            ⚙️
+        </button>
+    </div>
+
+    <!-- Přepínání měsíců -->
+    <div class="month-selector">
+        <button id="btnPrevMonth" class="month-nav-btn" title="Předchozí měsíc" aria-label="Předchozí měsíc">❮</button>
+        <div class="month-label-box" id="monthLabelBox">
+            <div class="month-name" id="currentMonthLabel">Březen 2025</div>
+            <span class="btn-today-badge" id="btnGoToday">Dnes</span>
+        </div>
+        <button id="btnNextMonth" class="month-nav-btn" title="Následující měsíc" aria-label="Následující měsíc">❯</button>
+    </div>
+
+    <!-- Nastavení sazeb (rozklikávací panel) -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-title">
+            <span>⚙️ Nastavení hodinové mzdy</span>
+            <span style="font-size:0.75rem; color:#e11d48; font-weight:600;">Ukládá se automaticky</span>
+        </div>
+        <div class="settings-grid">
+            <div class="form-group">
+                <label for="inputBaseRate">Základní hodinová sazba</label>
+                <div class="input-with-addon">
+                    <input type="number" id="inputBaseRate" class="form-input" min="0" step="5" value="180">
+                    <span class="input-addon">Kč/h</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputNightBonus">Příplatek za noční</label>
+                <div class="input-with-addon">
+                    <input type="number" id="inputNightBonus" class="form-input" min="0" step="5" value="25">
+                    <span class="input-addon">Kč/h</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hlavní karta s celkovým výdělkem -->
+    <div class="hero-earnings-card">
+        <div class="earnings-subtitle">Odhadovaný výdělek za tento měsíc</div>
+        <div class="earnings-amount">
+            <span id="heroTotalEarnings">0</span>
+            <span class="earnings-currency">Kč</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-val" id="heroTotalHours">0 h</div>
+                <div class="stat-lbl">Odpracováno</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" id="heroTotalShifts">0</div>
+                <div class="stat-lbl">Počet směn</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" id="heroAvgRate">0 Kč</div>
+                <div class="stat-lbl">Průměr / hod</div>
+            </div>
+        </div>
+
+        <!-- Rozdělení: Hotovo vs. Naplánováno -->
+        <div class="progress-split-box">
+            <div class="split-pill">
+                <div class="split-dot dot-done"></div>
+                <span>Odpracováno: <strong id="heroPastEarnings">0 Kč</strong></span>
+            </div>
+            <div class="split-pill">
+                <div class="split-dot dot-future"></div>
+                <span>Zbývá: <strong id="heroFutureEarnings">0 Kč</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nápověda -->
+    <div class="click-hint-banner">
+        <span>👇</span> Klikni na libovolný den pro přidání, úpravu nebo smazání směny!
+    </div>
+
+    <!-- Přepínač zobrazení Kalendář / Seznam směn -->
+    <div class="view-tabs">
+        <button class="view-tab active" id="tabCalendar" data-view="calendar">
+            📅 Kalendář měsíce
+        </button>
+        <button class="view-tab" id="tabList" data-view="list">
+            📋 Seznam směn (<span id="shiftCountBadge">0</span>)
+        </button>
+    </div>
+
+    <!-- Zobrazení 1: Kalendář -->
+    <div class="calendar-view" id="calendarView">
+        <div class="calendar-weekdays">
+            <span>Po</span><span>Út</span><span>St</span><span>Čt</span><span>Pá</span><span style="color:#b91c1c;">So</span><span style="color:#b91c1c;">Ne</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- Dynamicky generované dny -->
+        </div>
+    </div>
+
+    <!-- Zobrazení 2: Seznam směn -->
+    <div class="list-view" id="listView">
+        <!-- Dynamicky generovaný seznam směn -->
+    </div>
+
+    <!-- Rychlá akční lišta -->
+    <div class="action-bar">
+        <button id="btnOpenAddModal" class="btn-action-primary">
+            <span>➕</span> Přidat směnu
+        </button>
+        <button id="btnShareSummary" class="btn-action-secondary" title="Zkopírovat rychlý souhrn měsíce">
+            <span>📋</span> Shrnutí
+        </button>
+    </div>
+
+    <!-- Tlačítko: Smazat všechny směny -->
+    <div class="delete-all-row">
+        <button id="btnOpenDeleteAllModal" class="btn-delete-all" type="button">
+            <span>🗑️</span> Smazat všechny směny
+        </button>
+    </div>
+</div>
+
+<!-- MODÁL: Úprava / Přidání / Smazání směny na vybraný den -->
+<div class="modal-overlay" id="shiftModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-box">
+                <span class="modal-date-tag" id="modalDaySubtitle">Sobota</span>
+                <div class="modal-title" id="modalTitle">15. března 2025</div>
+            </div>
+            <button class="btn-modal-close" id="btnCloseModal" type="button" aria-label="Zavřít">&times;</button>
+        </div>
+
+        <form class="modal-form" id="shiftForm">
+            <input type="hidden" id="modalShiftId">
+            <input type="hidden" id="shiftDate">
+
+            <!-- Pole: Počet hodin vždy přímo po ruce -->
+            <div class="hours-control-block">
+                <div class="hours-top-line">
+                    <span class="hours-label">⏱️ Počet hodin směny:</span>
+                    <div class="hours-input-wrapper">
+                        <input type="number" id="shiftHours" class="hours-number-input" min="0.5" max="24" step="0.5" value="8" required>
+                        <span class="hours-addon-label">hod</span>
+                    </div>
+                </div>
+                <div class="hour-pills">
+                    <button type="button" class="btn-hour-pill" data-hours="4">4 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="6">6 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="7.5">7.5 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="8">8 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="10">10 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="11.5">11.5 h</button>
+                    <button type="button" class="btn-hour-pill" data-hours="12">12 h</button>
+                </div>
+            </div>
+
+            <!-- Rychlý výběr typu směny -->
+            <div class="presets-label">Typ směny:</div>
+            <div class="preset-buttons">
+                <button type="button" class="btn-preset selected" data-preset="ranni">
+                    <span class="preset-icon">☀️</span>
+                    <span class="preset-title">Ranní</span>
+                </button>
+                <button type="button" class="btn-preset" data-preset="odpoledni">
+                    <span class="preset-icon">⛅</span>
+                    <span class="preset-title">Odpolední</span>
+                </button>
+                <button type="button" class="btn-preset" data-preset="nocni">
+                    <span class="preset-icon">🌙</span>
+                    <span class="preset-title">Noční</span>
+                </button>
+                <button type="button" class="btn-preset" data-preset="dvanactka_den">
+                    <span class="preset-icon">⚡</span>
+                    <span class="preset-title">12h Den</span>
+                </button>
+                <button type="button" class="btn-preset" data-preset="dvanactka_noc">
+                    <span class="preset-icon">🌌</span>
+                    <span class="preset-title">12h Noc</span>
+                </button>
+                <button type="button" class="btn-preset" data-preset="vlastni">
+                    <span class="preset-icon">✏️</span>
+                    <span class="preset-title">Vlastní</span>
+                </button>
+            </div>
+            <input type="hidden" id="shiftTypeSelect" value="ranni">
+
+            <!-- ZATRŽENÍ: Víkendový příplatek +10% navíc -->
+            <label class="weekend-toggle-box" id="weekendToggleBox" for="checkWeekendBonus">
+                <div class="weekend-toggle-info">
+                    <div class="weekend-toggle-title">
+                        <span>🏖️</span> Víkendový příplatek (+10 % navíc)
+                    </div>
+                    <div class="weekend-toggle-sub" id="weekendSubText">
+                        Automaticky pro sobotu a neděli (nebo zatrhni ručně)
+                    </div>
+                </div>
+                <input type="checkbox" id="checkWeekendBonus" class="weekend-checkbox">
+            </label>
+
+            <!-- Extra bonus a poznámka -->
+            <div class="extra-row">
+                <div class="form-group">
+                    <label for="shiftBonus">Extra bonus / dýška</label>
+                    <div class="input-with-addon">
+                        <input type="number" id="shiftBonus" class="form-input" min="0" step="50" value="0">
+                        <span class="input-addon">Kč</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="shiftNote">Poznámka (volitelná)</label>
+                    <input type="text" id="shiftNote" class="form-input" placeholder="např. zástup, přesčas" style="padding-right:10px;">
+                </div>
+            </div>
+
+            <!-- Živý rozpis výpočtu -->
+            <div class="calc-preview-box">
+                <div>
+                    <div class="calc-preview-label">Výdělek za tuto směnu:</div>
+                    <div class="calc-preview-details" id="calcPreviewDetails">8 h × 180 Kč/h</div>
+                </div>
+                <div class="calc-preview-val" id="calcPreviewTotal">1 440 Kč</div>
+            </div>
+
+            <!-- Tlačítka: Uložit a Smazat směnu -->
+            <div class="modal-footer">
+                <button type="submit" class="btn-modal-save" id="btnSaveShift">
+                    <span>💾</span> Uložit směnu
+                </button>
+                <button type="button" class="btn-modal-delete" id="btnDeleteShift" style="display:none;">
+                    <span>🗑️</span> Smazat směnu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODÁL: Potvrzení smazání všech směn -->
+<div class="modal-overlay" id="deleteAllModal">
+    <div class="modal-card" style="max-width: 420px;">
+        <div class="confirm-modal-box">
+            <div class="confirm-modal-icon">🗑️</div>
+            <div class="confirm-modal-title">Smazat směny</div>
+            <div class="confirm-modal-desc">
+                Vyber si, zda chceš smazat směny pouze v aktuálně zobrazeném měsíci, nebo úplně vymazat všechny směny.
+            </div>
+
+            <div class="confirm-modal-actions">
+                <button type="button" class="btn-confirm-month" id="btnConfirmDeleteMonth">
+                    <span>🗓️</span> Smazat směny pro <span id="deleteMonthName">tento měsíc</span>
+                </button>
+                <button type="button" class="btn-confirm-all" id="btnConfirmDeleteAll">
+                    <span>💥</span> Smazat úplně VŠECHNY směny
+                </button>
+                <button type="button" class="btn-confirm-cancel" id="btnCancelDeleteAll">
+                    Zrušit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notifikace -->
+<div class="toast-notice" id="toastNotice">
+    <span>✅</span> <span id="toastText">Uloženo</span>
+</div>
+
+<script>
+// Globální proměnné a inicializace
+const now = new Date();
+
+const czechMonths = [
+    'Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen',
+    'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'
+];
+
+const czechDaysShort = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
+const czechDaysLong = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+
+const shiftPresets = {
+    ranni: { name: 'Ranní', defaultHours: 8, isNight: false, icon: '☀️' },
+    odpoledni: { name: 'Odpolední', defaultHours: 8, isNight: false, icon: '⛅' },
+    nocni: { name: 'Noční', defaultHours: 8, isNight: true, icon: '🌙' },
+    dvanactka_den: { name: '12h Den', defaultHours: 12, isNight: false, icon: '⚡' },
+    dvanactka_noc: { name: '12h Noc', defaultHours: 12, isNight: true, icon: '🌌' },
+    vlastni: { name: 'Vlastní', defaultHours: 8, isNight: false, icon: '✏️' }
+};
+
+const STORAGE_KEY_SHIFTS = 'web_laska_smeny_v2';
+const STORAGE_KEY_SETTINGS = 'web_laska_settings_v2';
+
+const defaultSettings = {
+    baseRate: 180,
+    nightBonus: 25
+};
+
+let appSettings = loadSettings();
+let shifts = [];
+let currentViewDate = new Date(now.getFullYear(), now.getMonth(), 1);
+
+function formatDateKey(year, month, day) {
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function loadSettings() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        return data ? { ...defaultSettings, ...JSON.parse(data) } : { ...defaultSettings };
+    } catch(e) {
+        return { ...defaultSettings };
+    }
+}
+
+function saveSettings() {
+    try {
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+function loadShifts() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY_SHIFTS);
+        if (data) {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        }
+    } catch(e) {
+        console.error(e);
+    }
+
+    const sample = generateInitialSampleShifts();
+    try {
+        localStorage.setItem(STORAGE_KEY_SHIFTS, JSON.stringify(sample));
+    } catch(e) {}
+    return sample;
+}
+
+function saveShifts(newShifts) {
+    shifts = newShifts;
+    try {
+        localStorage.setItem(STORAGE_KEY_SHIFTS, JSON.stringify(shifts));
+    } catch(e) {
+        console.error(e);
+    }
+    renderApp();
+}
+
+function isDateWeekend(dateStr) {
+    if (!dateStr) return false;
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return false;
+    const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    const day = d.getDay();
+    return (day === 0 || day === 6);
+}
+
+function generateInitialSampleShifts() {
+    const list = [];
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    const daysSample = [
+        { d: 2, type: 'ranni', hours: 8 },
+        { d: 3, type: 'ranni', hours: 8 },
+        { d: 5, type: 'odpoledni', hours: 8 },
+        { d: 6, type: 'odpoledni', hours: 8 },
+        { d: 8, type: 'dvanactka_den', hours: 12, weekendBonus: true },
+        { d: 9, type: 'nocni', hours: 8, bonus: 200, weekendBonus: true },
+        { d: 12, type: 'nocni', hours: 8 },
+        { d: 15, type: 'ranni', hours: 8, weekendBonus: true },
+        { d: 18, type: 'odpoledni', hours: 8 },
+        { d: 22, type: 'dvanactka_noc', hours: 12, weekendBonus: true },
+        { d: 24, type: 'ranni', hours: 8 },
+        { d: 27, type: 'odpoledni', hours: 8 }
+    ];
+
+    daysSample.forEach((s, idx) => {
+        const dateKey = formatDateKey(year, month + 1, s.d);
+        list.push({
+            id: 'shift_' + idx + '_' + Date.now(),
+            date: dateKey,
+            type: s.type,
+            hours: s.hours,
+            weekendBonus: s.weekendBonus ?? isDateWeekend(dateKey),
+            bonus: s.bonus || 0,
+            note: s.d === 9 ? 'Inventura' : ''
+        });
+    });
+
+    return list;
+}
+
+// Výpočet výdělku
+function calculateShiftEarnings(shift, settings = appSettings) {
+    const hours = parseFloat(shift.hours) || 0;
+    const bonus = parseFloat(shift.bonus) || 0;
+    const baseRate = settings.baseRate || 180;
+
+    const basePay = hours * baseRate;
+
+    // Víkendový příplatek: přesně +10 % navíc ze základní mzdy směny
+    let weekendPay = 0;
+    const hasWeekendBonus = shift.weekendBonus === true || (shift.weekendBonus === undefined && isDateWeekend(shift.date));
+    if (hasWeekendBonus) {
+        weekendPay = Math.round(basePay * 0.10);
+    }
+
+    // Příplatek za noční
+    let nightPay = 0;
+    if (shift.type === 'nocni' || shift.type === 'dvanactka_noc') {
+        nightPay = Math.round(hours * (settings.nightBonus || 25));
+    }
+
+    const total = Math.round(basePay + weekendPay + nightPay + bonus);
+    return {
+        hours,
+        baseRate,
+        basePay,
+        hasWeekendBonus,
+        weekendPay,
+        nightPay,
+        bonus,
+        total
+    };
+}
+
+function formatKc(num) {
+    return Math.round(num || 0).toLocaleString('cs-CZ');
+}
+
+// Spuštění po načtení DOM
+document.addEventListener('DOMContentLoaded', () => {
+    shifts = loadShifts();
+    initEventHandlers();
+    renderApp();
+});
+
+function initEventHandlers() {
+    // Přepínání měsíců
+    document.getElementById('btnPrevMonth').addEventListener('click', () => {
+        currentViewDate = new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() - 1, 1);
+        renderApp();
+    });
+
+    document.getElementById('btnNextMonth').addEventListener('click', () => {
+        currentViewDate = new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() + 1, 1);
+        renderApp();
+    });
+
+    document.getElementById('btnGoToday').addEventListener('click', () => {
+        currentViewDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        renderApp();
+    });
+
+    // Záložky Kalendář / Seznam
+    const tabCalendar = document.getElementById('tabCalendar');
+    const tabList = document.getElementById('tabList');
+    const calendarView = document.getElementById('calendarView');
+    const listView = document.getElementById('listView');
+
+    tabCalendar.addEventListener('click', () => {
+        tabCalendar.classList.add('active');
+        tabList.classList.remove('active');
+        calendarView.style.display = 'block';
+        listView.classList.remove('active');
+    });
+
+    tabList.addEventListener('click', () => {
+        tabList.classList.add('active');
+        tabCalendar.classList.remove('active');
+        calendarView.style.display = 'none';
+        listView.classList.add('active');
+    });
+
+    // Panel nastavení sazeb
+    const btnToggleSettings = document.getElementById('btnToggleSettings');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const inputBaseRate = document.getElementById('inputBaseRate');
+    const inputNightBonus = document.getElementById('inputNightBonus');
+
+    btnToggleSettings.addEventListener('click', () => {
+        settingsPanel.classList.toggle('active');
+    });
+
+    inputBaseRate.value = appSettings.baseRate;
+    inputNightBonus.value = appSettings.nightBonus;
+
+    function handleSettingsChange() {
+        appSettings.baseRate = Math.max(0, parseFloat(inputBaseRate.value) || 0);
+        appSettings.nightBonus = Math.max(0, parseFloat(inputNightBonus.value) || 0);
+        saveSettings();
+        renderApp();
+    }
+
+    inputBaseRate.addEventListener('input', handleSettingsChange);
+    inputNightBonus.addEventListener('input', handleSettingsChange);
+
+    // Tlačítko přidat směnu
+    document.getElementById('btnOpenAddModal').addEventListener('click', () => {
+        const year = currentViewDate.getFullYear();
+        const month = currentViewDate.getMonth();
+        const day = (year === now.getFullYear() && month === now.getMonth()) ? now.getDate() : 1;
+        const dateKey = formatDateKey(year, month + 1, day);
+        openShiftModalForDate(dateKey);
+    });
+
+    // Modál pro den - zavření
+    document.getElementById('btnCloseModal').addEventListener('click', closeShiftModal);
+    document.getElementById('shiftModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('shiftModal')) closeShiftModal();
+    });
+
+    // Rychlé pilulky hodin v modálu
+    document.querySelectorAll('.btn-hour-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            const h = pill.getAttribute('data-hours');
+            document.getElementById('shiftHours').value = h;
+            updateModalCalcPreview();
+        });
+    });
+
+    // Změna počtu hodin ručním psaním
+    document.getElementById('shiftHours').addEventListener('input', updateModalCalcPreview);
+    document.getElementById('shiftBonus').addEventListener('input', updateModalCalcPreview);
+    document.getElementById('checkWeekendBonus').addEventListener('change', updateModalCalcPreview);
+
+    // Výběr typu směny
+    document.querySelectorAll('.btn-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const presetKey = btn.getAttribute('data-preset');
+            document.getElementById('shiftTypeSelect').value = presetKey;
+            
+            const preset = shiftPresets[presetKey];
+            if (preset && preset.defaultHours) {
+                document.getElementById('shiftHours').value = preset.defaultHours;
+            }
+            
+            updatePresetHighlight(presetKey);
+            updateModalCalcPreview();
+        });
+    });
+
+    // Odeslání formuláře směny
+    document.getElementById('shiftForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('modalShiftId').value;
+        const date = document.getElementById('shiftDate').value;
+        const hours = parseFloat(document.getElementById('shiftHours').value) || 0;
+        const bonus = parseFloat(document.getElementById('shiftBonus').value) || 0;
+        const type = document.getElementById('shiftTypeSelect').value || 'ranni';
+        const weekendBonus = document.getElementById('checkWeekendBonus').checked;
+        const note = document.getElementById('shiftNote').value.trim();
+
+        if (!date) {
+            showToast('Chyba: Chybí datum směny');
+            return;
+        }
+
+        let updatedList = [...shifts];
+
+        if (id) {
+            updatedList = updatedList.map(s => {
+                if (s.id === id) {
+                    return { ...s, date, hours, bonus, type, weekendBonus, note };
+                }
+                return s;
+            });
+            showToast('Směna byla upravena! ✨');
+        } else {
+            const newShift = {
+                id: 'shift_' + Date.now(),
+                date,
+                hours,
+                bonus,
+                type,
+                weekendBonus,
+                note
+            };
+            updatedList = updatedList.filter(s => s.date !== date);
+            updatedList.push(newShift);
+            showToast('Směna uložena! 💰');
+        }
+
+        saveShifts(updatedList);
+        closeShiftModal();
+    });
+
+    // Tlačítko SMAZAT SMĚNU v modálu dne
+    document.getElementById('btnDeleteShift').addEventListener('click', () => {
+        const id = document.getElementById('modalShiftId').value;
+        const date = document.getElementById('shiftDate').value;
+        
+        if (id) {
+            deleteShiftById(id);
+        } else if (date) {
+            deleteShiftByDate(date);
+        }
+        closeShiftModal();
+    });
+
+    // TLAČÍTKO SMAZAT VŠECHNY SMĚNY
+    const deleteAllModal = document.getElementById('deleteAllModal');
+    const btnOpenDeleteAll = document.getElementById('btnOpenDeleteAllModal');
+    const btnConfirmMonth = document.getElementById('btnConfirmDeleteMonth');
+    const btnConfirmAll = document.getElementById('btnConfirmDeleteAll');
+    const btnCancelDeleteAll = document.getElementById('btnCancelDeleteAll');
+
+    btnOpenDeleteAll.addEventListener('click', () => {
+        const month = currentViewDate.getMonth();
+        const year = currentViewDate.getFullYear();
+        document.getElementById('deleteMonthName').textContent = `${czechMonths[month]} ${year}`;
+        deleteAllModal.classList.add('active');
+    });
+
+    btnCancelDeleteAll.addEventListener('click', () => {
+        deleteAllModal.classList.remove('active');
+    });
+
+    deleteAllModal.addEventListener('click', (e) => {
+        if (e.target === deleteAllModal) {
+            deleteAllModal.classList.remove('active');
+        }
+    });
+
+    // 1) Smazat směny pro zobrazený měsíc
+    btnConfirmMonth.addEventListener('click', () => {
+        const year = currentViewDate.getFullYear();
+        const month = currentViewDate.getMonth();
+        const prefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+        
+        const countBefore = shifts.length;
+        const remaining = shifts.filter(s => !s.date.startsWith(prefix));
+        
+        saveShifts(remaining);
+        deleteAllModal.classList.remove('active');
+        
+        const deletedCount = countBefore - remaining.length;
+        showToast(`Smazáno ${deletedCount} směn pro ${czechMonths[month]}! 🗑️`);
+    });
+
+    // 2) Smazat úplně všechny směny ze všech měsíců
+    btnConfirmAll.addEventListener('click', () => {
+        saveShifts([]);
+        deleteAllModal.classList.remove('active');
+        showToast('Všechny směny byly úspěšně smazány! 🗑️');
+    });
+
+    // Sdílení souhrnu
+    document.getElementById('btnShareSummary').addEventListener('click', () => {
+        const monthShifts = getShiftsForViewMonth();
+        const year = currentViewDate.getFullYear();
+        const month = currentViewDate.getMonth();
+        const monthName = czechMonths[month];
+
+        let totalEarnings = 0;
+        let totalHours = 0;
+        monthShifts.forEach(s => {
+            const c = calculateShiftEarnings(s);
+            totalEarnings += c.total;
+            totalHours += c.hours;
+        });
+
+        const summaryText = `💰 Můj výdělek ze směn (${monthName} ${year}):\n` +
+            `• Počet směn: ${monthShifts.length}\n` +
+            `• Odpracováno: ${Math.round(totalHours * 10)/10} hodin\n` +
+            `• Celkový výdělek: ${formatKc(totalEarnings)} Kč ❤️`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(summaryText).then(() => {
+                showToast('Souhrn zkopírován do schránky! 📋');
+            }).catch(() => {
+                prompt('Tady je tvůj souhrn (zkopíruj si ho):', summaryText);
+            });
+        } else {
+            prompt('Tady je tvůj souhrn (zkopíruj si ho):', summaryText);
+        }
+    });
+}
+
+function deleteShiftById(id) {
+    const updated = shifts.filter(s => s.id !== id);
+    saveShifts(updated);
+    showToast('Směna byla smazána 🗑️');
+}
+
+function deleteShiftByDate(dateStr) {
+    const updated = shifts.filter(s => s.date !== dateStr);
+    saveShifts(updated);
+    showToast('Směna byla smazána 🗑️');
+}
+
+// OTEVŘENÍ MODÁLU PŘÍMO KLIKNUTÍM NA DATUM V KALENDÁŘI
+function openShiftModalForDate(dateStr) {
+    const existingShift = shifts.find(s => s.date === dateStr);
+    const isWeekend = isDateWeekend(dateStr);
+
+    document.getElementById('modalShiftId').value = existingShift ? existingShift.id : '';
+    document.getElementById('shiftDate').value = dateStr;
+
+    // Nastavení názvu dne a data
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const d = parseInt(parts[2], 10);
+        const dateObj = new Date(y, m, d);
+        const dayName = czechDaysLong[dateObj.getDay()];
+        
+        document.getElementById('modalDaySubtitle').textContent = isWeekend ? `${dayName} • Víkend 🏖️` : dayName;
+        document.getElementById('modalTitle').textContent = `${d}. ${czechMonths[m]} ${y}`;
+    }
+
+    const hoursInput = document.getElementById('shiftHours');
+    const bonusInput = document.getElementById('shiftBonus');
+    const noteInput = document.getElementById('shiftNote');
+    const typeSelect = document.getElementById('shiftTypeSelect');
+    const weekendCheckbox = document.getElementById('checkWeekendBonus');
+    const btnDelete = document.getElementById('btnDeleteShift');
+    const saveBtn = document.getElementById('btnSaveShift');
+
+    if (existingShift) {
+        hoursInput.value = existingShift.hours || 8;
+        bonusInput.value = existingShift.bonus || 0;
+        noteInput.value = existingShift.note || '';
+        typeSelect.value = existingShift.type || 'ranni';
+        
+        weekendCheckbox.checked = existingShift.weekendBonus !== undefined ? existingShift.weekendBonus : isWeekend;
+        
+        btnDelete.style.display = 'flex';
+        saveBtn.innerHTML = `<span>💾</span> Uložit změny`;
+    } else {
+        hoursInput.value = 8;
+        bonusInput.value = 0;
+        noteInput.value = '';
+        typeSelect.value = 'ranni';
+        
+        weekendCheckbox.checked = isWeekend;
+        
+        btnDelete.style.display = 'none';
+        saveBtn.innerHTML = `<span>➕</span> Uložit směnu`;
+    }
+
+    updatePresetHighlight(typeSelect.value);
+    updateModalCalcPreview();
+
+    document.getElementById('shiftModal').classList.add('active');
+}
+
+function closeShiftModal() {
+    document.getElementById('shiftModal').classList.remove('active');
+}
+
+function updatePresetHighlight(presetKey) {
+    document.querySelectorAll('.btn-preset').forEach(btn => {
+        if (btn.getAttribute('data-preset') === presetKey) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
+}
+
+function updateModalCalcPreview() {
+    const date = document.getElementById('shiftDate').value;
+    const hours = parseFloat(document.getElementById('shiftHours').value) || 0;
+    const bonus = parseFloat(document.getElementById('shiftBonus').value) || 0;
+    const type = document.getElementById('shiftTypeSelect').value || 'ranni';
+    const weekendBonus = document.getElementById('checkWeekendBonus').checked;
+
+    const dummy = { date, hours, bonus, type, weekendBonus };
+    const calc = calculateShiftEarnings(dummy);
+
+    document.getElementById('calcPreviewTotal').textContent = `${formatKc(calc.total)} Kč`;
+    
+    let details = `${Math.round(calc.hours * 10)/10} h × ${appSettings.baseRate} Kč/h (${formatKc(calc.basePay)} Kč)`;
+    if (calc.weekendPay > 0) details += ` + víkend +10% (${formatKc(calc.weekendPay)} Kč)`;
+    if (calc.nightPay > 0) details += ` + noční (${formatKc(calc.nightPay)} Kč)`;
+    if (calc.bonus > 0) details += ` + extra (${formatKc(calc.bonus)} Kč)`;
+    
+    document.getElementById('calcPreviewDetails').textContent = details;
+}
+
+// Vykreslení kalendáře a přehledu
+function renderApp() {
+    renderMonthHeader();
+    renderStats();
+    renderCalendar();
+    renderShiftList();
+}
+
+function renderMonthHeader() {
+    const year = currentViewDate.getFullYear();
+    const month = currentViewDate.getMonth();
+    const lbl = document.getElementById('currentMonthLabel');
+    if (lbl) lbl.textContent = `${czechMonths[month]} ${year}`;
+    
+    const isCurrentActualMonth = (year === now.getFullYear() && month === now.getMonth());
+    const badge = document.getElementById('btnGoToday');
+    if (badge) {
+        if (isCurrentActualMonth) {
+            badge.textContent = 'Tento měsíc';
+            badge.style.background = '#ffe4e6';
+        } else {
+            badge.textContent = 'Zpět na dnešek';
+            badge.style.background = '#ffccd5';
+        }
+    }
+}
+
+function getShiftsForViewMonth() {
+    const year = currentViewDate.getFullYear();
+    const month = currentViewDate.getMonth();
+    const prefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+    return shifts.filter(s => s.date && s.date.startsWith(prefix));
+}
+
+function renderStats() {
+    const monthShifts = getShiftsForViewMonth();
+    
+    let totalEarnings = 0;
+    let totalHours = 0;
+    let pastEarnings = 0;
+    let futureEarnings = 0;
+
+    const todayStr = formatDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+    monthShifts.forEach(shift => {
+        const calc = calculateShiftEarnings(shift);
+        totalEarnings += calc.total;
+        totalHours += calc.hours;
+
+        if (shift.date <= todayStr) {
+            pastEarnings += calc.total;
+        } else {
+            futureEarnings += calc.total;
+        }
+    });
+
+    const shiftCount = monthShifts.length;
+    const avgHourly = totalHours > 0 ? Math.round(totalEarnings / totalHours) : appSettings.baseRate;
+
+    const elTotal = document.getElementById('heroTotalEarnings');
+    if (elTotal) elTotal.textContent = formatKc(totalEarnings);
+    
+    const elHours = document.getElementById('heroTotalHours');
+    if (elHours) elHours.textContent = `${Math.round(totalHours * 10) / 10} h`;
+
+    const elCount = document.getElementById('heroTotalShifts');
+    if (elCount) elCount.textContent = shiftCount;
+
+    const elAvg = document.getElementById('heroAvgRate');
+    if (elAvg) elAvg.textContent = `${formatKc(avgHourly)} Kč`;
+
+    const elPast = document.getElementById('heroPastEarnings');
+    if (elPast) elPast.textContent = `${formatKc(pastEarnings)} Kč`;
+
+    const elFuture = document.getElementById('heroFutureEarnings');
+    if (elFuture) elFuture.textContent = `${formatKc(futureEarnings)} Kč`;
+
+    const elBadge = document.getElementById('shiftCountBadge');
+    if (elBadge) elBadge.textContent = shiftCount;
+}
+
+// Vykreslení kalendáře
+function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const year = currentViewDate.getFullYear();
+    const month = currentViewDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const totalDays = lastDayOfMonth.getDate();
+
+    // Den v týdnu pro 1. den: Po = 0, Ne = 6
+    let startingDay = firstDayOfMonth.getDay() - 1;
+    if (startingDay === -1) startingDay = 6;
+
+    // Prázdné buňky
+    for (let i = 0; i < startingDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-cell other-month';
+        grid.appendChild(emptyCell);
+    }
+
+    const todayStr = formatDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    const monthShifts = getShiftsForViewMonth();
+
+    for (let day = 1; day <= totalDays; day++) {
+        const dateKey = formatDateKey(year, month + 1, day);
+        const dayDate = new Date(year, month, day);
+        const dayOfWeek = dayDate.getDay();
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isToday = (dateKey === todayStr);
+
+        const shift = monthShifts.find(s => s.date === dateKey);
+
+        const cell = document.createElement('div');
+        let classes = ['calendar-cell'];
+        if (isWeekend) classes.push('weekend');
+        if (isToday) classes.push('today');
+
+        cell.className = classes.join(' ');
+        cell.setAttribute('data-date', dateKey);
+
+        let innerHTML = `
+            <div class="cell-top">
+                <span class="day-number">${day}</span>
+                ${isToday ? '<span class="today-dot" title="Dnes"></span>' : ''}
+            </div>
+        `;
+
+        if (shift) {
+            const preset = shiftPresets[shift.type] || shiftPresets.vlastni;
+            const calc = calculateShiftEarnings(shift);
+            innerHTML += `
+                <div class="cell-shift shift-${shift.type}">
+                    ${preset.icon} ${shift.hours}h${calc.hasWeekendBonus ? ' +10%' : ''}
+                </div>
+                <div class="cell-money">+${formatKc(calc.total)}</div>
+            `;
+        } else {
+            innerHTML += `<div style="height:12px;"></div>`;
+        }
+
+        cell.innerHTML = innerHTML;
+
+        // Kliknutím na buňku otevřeme modál přímo pro toto datum
+        const handleDateClick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openShiftModalForDate(dateKey);
+        };
+
+        cell.addEventListener('click', handleDateClick);
+
+        grid.appendChild(cell);
+    }
+}
+
+// Vykreslení seznamu směn
+function renderShiftList() {
+    const listView = document.getElementById('listView');
+    if (!listView) return;
+    listView.innerHTML = '';
+
+    const monthShifts = getShiftsForViewMonth();
+
+    if (monthShifts.length === 0) {
+        listView.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <div class="empty-text">V tomto měsíci nemáš zadanou žádnou směnu.</div>
+                <div style="font-size:0.8rem; color:#94a3b8; margin-top:4px;">Klikni na libovolný den v kalendáři a zadej směnu!</div>
+            </div>
+        `;
+        return;
+    }
+
+    monthShifts.sort((a, b) => a.date.localeCompare(b.date));
+
+    monthShifts.forEach(shift => {
+        const parts = shift.date.split('-');
+        let dayNum = parts[2];
+        let dayName = '';
+        if (parts.length === 3) {
+            const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            dayNum = d.getDate();
+            dayName = czechDaysShort[d.getDay()];
+        }
+
+        const preset = shiftPresets[shift.type] || shiftPresets.vlastni;
+        const calc = calculateShiftEarnings(shift);
+
+        const card = document.createElement('div');
+        card.className = 'shift-card-item';
+        card.innerHTML = `
+            <div class="shift-item-left">
+                <div class="date-badge">
+                    <span class="date-dayname">${dayName}</span>
+                    <span class="date-daynum">${dayNum}</span>
+                </div>
+                <div class="shift-info-box">
+                    <div class="shift-title-line">
+                        <span class="shift-badge-pill shift-${shift.type}">${preset.icon} ${preset.name}</span>
+                        <span class="shift-hours-text">${shift.hours} hod</span>
+                        ${calc.hasWeekendBonus ? '<span class="shift-weekend-tag">+10% víkend</span>' : ''}
+                    </div>
+                    ${shift.note ? `<div class="shift-note-text">📝 ${escapeHtml(shift.note)}</div>` : ''}
+                    ${shift.bonus > 0 ? `<div style="font-size:0.72rem; color:#d97706; font-weight:700;">🎁 Extra: +${formatKc(shift.bonus)} Kč</div>` : ''}
+                </div>
+            </div>
+            <div class="shift-item-right">
+                <div class="shift-earn-val">+${formatKc(calc.total)} Kč</div>
+                <button type="button" class="btn-item-delete" title="Smazat směnu" data-id="${shift.id}">&times;</button>
+            </div>
+        `;
+
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.btn-item-delete')) return;
+            openShiftModalForDate(shift.date);
+        });
+
+        const delBtn = card.querySelector('.btn-item-delete');
+        delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm(`Opravdu smazat směnu z ${shift.date}?`)) {
+                deleteShiftById(shift.id);
+            }
+        });
+
+        listView.appendChild(card);
+    });
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function showToast(text) {
+    const toast = document.getElementById('toastNotice');
+    const textEl = document.getElementById('toastText');
+    if (!toast || !textEl) return;
+
+    textEl.textContent = text;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2400);
+}
+</script>
+
+</body>
+</html>

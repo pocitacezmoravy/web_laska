@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Co budeme dělat? ❤️</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,11 +14,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
     width: 100%;
     min-height: 100%;
+    min-height: 100dvh;
     overflow-x: hidden;
 }
 
@@ -30,10 +32,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 16px;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
     position: relative;
     color: #2d3748;
     overflow-y: auto;
+    touch-action: manipulation;
 }
 
 @keyframes gradientBG {
@@ -106,6 +113,7 @@ body {
     text-align: center;
     position: relative;
     z-index: 10;
+    margin: auto;
 }
 
 .small-question {
@@ -132,12 +140,15 @@ h1 {
 }
 
 .btn-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
     background: rgba(255, 255, 255, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.9);
     color: #2d3748;
     text-decoration: none;
-    padding: 16px 20px;
+    padding: 14px 20px;
     border-radius: 18px;
     font-size: 1rem;
     font-weight: 600;
@@ -155,6 +166,50 @@ h1 {
 
 .btn-link:active {
     transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px 10px;
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+    }
+    .card {
+        padding: 22px 14px;
+        border-radius: 22px;
+    }
+    .small-question {
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+    }
+    h1 {
+        font-size: 1.55rem;
+        margin-bottom: 16px;
+    }
+    .menu-options {
+        gap: 8px;
+    }
+    .btn-link {
+        padding: 12px 14px;
+        min-height: 44px;
+        font-size: 0.92rem;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        padding: 18px 10px;
+    }
+    h1 {
+        font-size: 1.4rem;
+    }
+    .btn-link {
+        padding: 10px 12px;
+        font-size: 0.88rem;
+    }
 }
 </style>
 </head>
@@ -177,6 +232,7 @@ h1 {
         <a href="film.html" class="btn-link">🎬 Filmový večer</a>
         <a href="vylet.html" class="btn-link">🌲 Výlet</a>
         <a href="prekvapeni.html" class="btn-link">🎁 Překvapení</a>
+        <a href="smeny.html" class="btn-link">💰 Výdělek ze směn</a>
         <a href="hra_1.html" class="btn-link"> ❤️ Kalkulačka lásky</a>
         <a href="hra_2.html" class="btn-link">🎰 Automat štěstí</a>
         

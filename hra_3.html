@@ -2,20 +2,108 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Zamilované pexeso 🧩</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdf2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; touch-action: manipulation; }
-.card-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; position: relative; z-index: 10; }
-h2 { margin-bottom: 5px; color: #db2777; }
-.btn-action { background: rgba(237, 242, 247, 0.8); color: #4a5568; width: 100%; border: 1px solid rgba(203, 213, 224, 0.6); border-radius: 12px; padding: 12px; cursor: pointer; font-weight: 700; font-family: inherit; margin-top: 10px; transition: all 0.25s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; touch-action: manipulation; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; min-height: 100vh; min-height: 100dvh; }
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #fdf2f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 16px;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+    overflow-x: hidden;
+    overflow-y: auto;
+    touch-action: manipulation;
+}
+.card-container {
+    background: white;
+    padding: 25px 22px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    margin: auto;
+}
+h2 { margin-bottom: 5px; color: #db2777; font-size: 1.5rem; }
+.btn-action {
+    background: rgba(237, 242, 247, 0.8);
+    color: #4a5568;
+    width: 100%;
+    border: 1px solid rgba(203, 213, 224, 0.6);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: inherit;
+    margin-top: 10px;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    touch-action: manipulation;
+    min-height: 46px;
+}
 .btn-action:hover { background: rgba(226, 232, 240, 1); }
 .btn-restart { background: linear-gradient(135deg, #d53f8c 0%, #b83280 100%); color: white; border: none; box-shadow: 0 6px 15px rgba(213, 63, 140, 0.35); }
 .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 15px; }
-.memory-card { aspect-ratio: 1; background: #f472b6; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; touch-action: manipulation; }
+.memory-card { aspect-ratio: 1; background: #f472b6; border: none; border-radius: 8px; font-size: 1.25rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; touch-action: manipulation; padding: 0; }
 .memory-card.flipped, .memory-card.matched { background: white; border: 2px solid #f472b6; cursor: default; }
-#message { margin-top: 15px; font-weight: bold; color: #be185d; min-height: 24px; font-size: 1.05rem; }
+#message { margin-top: 12px; font-weight: bold; color: #be185d; min-height: 24px; font-size: 1rem; }
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px 8px;
+    }
+    .card-container {
+        padding: 16px 10px;
+        border-radius: 18px;
+    }
+    h2 {
+        font-size: 1.35rem;
+    }
+    .grid {
+        gap: 4px;
+        margin-top: 10px;
+    }
+    .memory-card {
+        font-size: 1.05rem;
+        border-radius: 6px;
+    }
+    .btn-action {
+        padding: 11px;
+        min-height: 44px;
+        font-size: 0.92rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .card-container {
+        padding: 12px 6px;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+    .grid {
+        gap: 3px;
+    }
+    .memory-card {
+        font-size: 0.95rem;
+        border-radius: 5px;
+    }
+}
 
 /* Styl pro padající konfety */
 .confetti {
